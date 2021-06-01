@@ -1,0 +1,31 @@
+qdatalib package
+================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 10
+
+   qdatalib.conf
+   qdatalib.telemetry
+   qdatalib.tests
+
+Submodules
+----------
+
+qdatalib.hello\_world module
+----------------------------
+
+.. automodule:: qdatalib.hello_world
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: qdatalib
+   :members:
+   :undoc-members:
+   :show-inheritance:

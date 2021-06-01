@@ -1,0 +1,10 @@
+qdatalib.conf package
+=====================
+
+Module contents
+---------------
+
+.. automodule:: qdatalib.conf
+   :members:
+   :undoc-members:
+   :show-inheritance:

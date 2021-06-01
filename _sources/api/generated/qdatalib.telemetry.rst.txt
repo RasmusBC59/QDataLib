@@ -1,0 +1,21 @@
+qdatalib.telemetry package
+==========================
+
+Submodules
+----------
+
+qdatalib.telemetry.telemetry\_functions module
+----------------------------------------------
+
+.. automodule:: qdatalib.telemetry.telemetry_functions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: qdatalib.telemetry
+   :members:
+   :undoc-members:
+   :show-inheritance:

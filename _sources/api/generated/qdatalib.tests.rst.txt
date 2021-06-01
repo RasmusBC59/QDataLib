@@ -1,0 +1,37 @@
+qdatalib.tests package
+======================
+
+Submodules
+----------
+
+qdatalib.tests.conftest module
+------------------------------
+
+.. automodule:: qdatalib.tests.conftest
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+qdatalib.tests.test\_config module
+----------------------------------
+
+.. automodule:: qdatalib.tests.test_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+qdatalib.tests.test\_installation module
+----------------------------------------
+
+.. automodule:: qdatalib.tests.test_installation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: qdatalib.tests
+   :members:
+   :undoc-members:
+   :show-inheritance:
