@@ -3,29 +3,15 @@ import pytest
 import os
 import xarray as xr
 from qcodes import (
-    Measurement,
-    experiments,
-    initialise_database,
     initialise_or_create_database_at,
     load_by_guid,
-    load_by_run_spec,
-    load_experiment,
-    load_last_experiment,
-    load_or_create_experiment,
-    new_experiment,
-)
+    load_or_create_experiment)
 from qcodes.dataset.data_set import load_by_id
-from qcodes.dataset.plotting import plot_dataset
 from qcodes.tests.instrument_mocks import (DummyInstrument,
                                            DummyInstrumentWithMeasurement)
 from qcodes.utils.dataset.doNd import do1d
 from qcodes.dataset.sqlite.database import connect
-from qdatalib.tolib import (uploade_to_catalog_by_id,
-                            extract_run_into_db_and_catalog_by_id,
-                            extract_run_into_nc_and_catalog,
-                            get_data_by_catalog,
-                            get_data_from_nc_by_catalog
-                            )
+from qdatalib.tolib import Qdatalib
 
 
 @pytest.fixture
@@ -81,13 +67,21 @@ def target_db_path(tmp_path):
     return os.path.join(tmp_path, 'target.db')
 
 
-def test_uploade_to_catalog_by_id_defaults(tmp_collection, data0):
+@pytest.fixture
+def tmp_qdatalib(tmp_collection, source_db_path, target_db_path, tmp_path):
+
+    qdatalib = Qdatalib(tmp_collection, source_db_path, target_db_path,
+                        tmp_path)
+    return qdatalib
+
+
+def test_uploade_to_catalog_by_id_defaults(tmp_qdatalib, data0):
 
     run_id = data0.run_id
 
-    uploade_to_catalog_by_id(id=run_id, collection=tmp_collection)
+    tmp_qdatalib.uploade_to_catalog_by_id(id=run_id)
 
-    x = tmp_collection.find_one()
+    x = tmp_qdatalib.collection.find_one()
 
     assert x['_id'] == data0.guid
     assert x['run_id'] == data0.captured_run_id
@@ -97,7 +91,7 @@ def test_uploade_to_catalog_by_id_defaults(tmp_collection, data0):
     assert x['sample_name'] == data0.sample_name
 
 
-def test_uploade_to_catalog_by_id_given_arguments(tmp_collection, data0):
+def test_uploade_to_catalog_by_id_given_arguments(tmp_qdatalib, data0):
 
     run_id = data0 .run_id
 
@@ -105,13 +99,12 @@ def test_uploade_to_catalog_by_id_given_arguments(tmp_collection, data0):
     tag = 'testtag'
     note = 'test note'
 
-    uploade_to_catalog_by_id(id=run_id,
-                             collection=tmp_collection,
-                             scientist=scientist,
-                             tag=tag,
-                             note=note)
+    tmp_qdatalib.uploade_to_catalog_by_id(id=run_id,
+                                         scientist=scientist,
+                                         tag=tag,
+                                         note=note)
 
-    x = tmp_collection.find_one()
+    x = tmp_qdatalib.collection.find_one()
 
     assert x['_id'] == data0.guid
     assert x['run_id'] == data0.captured_run_id
@@ -124,34 +117,28 @@ def test_uploade_to_catalog_by_id_given_arguments(tmp_collection, data0):
     assert x['note'] == note
 
 
-def test_uploade_to_catalog_by_id_add_dict(tmp_collection, data0):
+def test_uploade_to_catalog_by_id_add_dict(tmp_qdatalib, data0):
 
     run_id = data0.run_id
     guid = data0.guid
 
     test_dict = {'my': 'min', 'test': 'prova', 'one': 1, 'float': 1.6}
 
-    uploade_to_catalog_by_id(id=run_id,
-                             collection=tmp_collection,
-                             dict_exstra=test_dict)
+    tmp_qdatalib.uploade_to_catalog_by_id(id=run_id,
+                                         dict_exstra=test_dict)
 
-    x = tmp_collection.find_one({'_id': guid})
+    x = tmp_qdatalib.collection.find_one({'_id': guid})
     for key in test_dict.keys():
         assert x[key] == test_dict[key]
 
 
-def test_extract_run_into_db_and_catalog_by_id(tmp_collection, data0,
-                                               source_db_path,
-                                               target_db_path):
+def test_extract_run_into_db_and_catalog_by_id(tmp_qdatalib, data0):
     run_id = data0.run_id
-    extract_run_into_db_and_catalog_by_id(run_id=run_id,
-                                          db_source=source_db_path,
-                                          db_target=target_db_path,
-                                          collection=tmp_collection)
+    tmp_qdatalib.extract_run_into_db_and_catalog_by_id(run_id=run_id,)
 
-    source_conn = connect(source_db_path)
+    source_conn = connect(tmp_qdatalib.db_source)
     data_source = load_by_id(run_id, source_conn)
-    target_conn = connect(target_db_path)
+    target_conn = connect(tmp_qdatalib.db_target)
     guid = data_source.guid
     data_target = load_by_guid(guid, target_conn)
 
@@ -161,34 +148,25 @@ def test_extract_run_into_db_and_catalog_by_id(tmp_collection, data0,
     target_conn.close()
 
 
-def test_extract_run_into_nc_and_catalog(tmp_collection, data0, source_db_path,
-                                         tmp_path):
+def test_extract_run_into_nc_and_catalog(tmp_qdatalib, data0):
     run_id = data0.run_id
     guid = data0.guid
-    extract_run_into_nc_and_catalog(run_id,
-                                    db_source=source_db_path,
-                                    target_dir=tmp_path,
-                                    collection=tmp_collection
-                                    )
-    nc_path = os.path.join(tmp_path, guid+".nc")
+    tmp_qdatalib.extract_run_into_nc_and_catalog(run_id)
+    nc_path = os.path.join(tmp_qdatalib.target_dir, guid+".nc")
     ncdata = xr.open_dataset(nc_path)
     assert ncdata == data0.to_xarray_dataset()
 
 
-def test_get_data_by_catalog(tmp_collection, data0, source_db_path,
-                             target_db_path):
+def test_get_data_by_catalog(tmp_qdatalib, data0):
     run_id = data0.run_id
-    extract_run_into_db_and_catalog_by_id(run_id=run_id,
-                                          db_source=source_db_path,
-                                          db_target=target_db_path,
-                                          collection=tmp_collection)
+    tmp_qdatalib.extract_run_into_db_and_catalog_by_id(run_id=run_id)
 
-    source_conn = connect(source_db_path)
+    source_conn = connect(tmp_qdatalib.db_source)
     data_source = load_by_id(run_id, source_conn)
-    target_conn = connect(target_db_path)
+    target_conn = connect(tmp_qdatalib.db_target)
     guid = data_source.guid
     serch_dict = {'_id': guid}
-    data_target = get_data_by_catalog(serch_dict, tmp_collection)
+    data_target = tmp_qdatalib.get_data_by_catalog(serch_dict)
 
     assert data_source.the_same_dataset_as(data_target)
 
@@ -196,19 +174,15 @@ def test_get_data_by_catalog(tmp_collection, data0, source_db_path,
     target_conn.close()
 
 
-def test_get_data_form_nc_by_catalog(tmp_collection, data0, source_db_path,
-                                     tmp_path):
+def test_get_data_form_nc_by_catalog(tmp_qdatalib, data0):
     run_id = data0.run_id
-    extract_run_into_nc_and_catalog(run_id=run_id,
-                                    db_source=source_db_path,
-                                    target_dir=tmp_path,
-                                    collection=tmp_collection)
+    tmp_qdatalib.extract_run_into_nc_and_catalog(run_id=run_id)
 
-    source_conn = connect(source_db_path)
+    source_conn = connect(tmp_qdatalib.db_source)
     data_source = load_by_id(run_id, source_conn)
     guid = data_source.guid
     serch_dict = {'_id': guid}
-    get_nc = get_data_from_nc_by_catalog(serch_dict, tmp_collection, tmp_path)
+    get_nc = tmp_qdatalib.get_data_from_nc_by_catalog(serch_dict)
 
     assert get_nc == data_source.to_xarray_dataset()
 
