@@ -1,7 +1,7 @@
 # qdatalib
 
 # Description
-
+QDataLib is a library of wrappers around some of the most useful ”data”-functions in QCoDeS. The Idea of QDataLib is to keep track of your data files using a MongoDB database, and ease the export to other file formats than SQLite
 # Installation
 
 # Usage
