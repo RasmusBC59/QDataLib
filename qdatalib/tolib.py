@@ -1,8 +1,10 @@
 import os
+import pprint
 from pymongo import collection
 import xarray as xr
 from qcodes.dataset.database_extract_runs import extract_runs_into_db
 from qcodes.dataset.data_set import load_by_id, load_by_guid
+pp = pprint.PrettyPrinter(indent=4)
 
 
 class Qdatalib:
@@ -20,26 +22,29 @@ class Qdatalib:
     def extract_run_into_db_and_catalog_by_id(self, run_id: int,
                                               scientist: str = 'john doe',
                                               tag: str = '',
-                                              note: str = ''
-                                              ) -> None:
+                                              note: str = '',
+                                              dict_exstra={}) -> None:
 
         self.uploade_to_catalog_by_id(run_id,
                                       scientist,
                                       tag,
-                                      note)
+                                      note,
+                                      dict_exstra)
 
         extract_runs_into_db(self.db_source,  self.db_target, run_id)
 
     def extract_run_into_nc_and_catalog(self, run_id: int,
                                         scientist: str = 'john doe',
                                         tag: str = '',
-                                        note: str = ''
+                                        note: str = '',
+                                        dict_exstra={}
                                         ) -> None:
 
         self.uploade_to_catalog_by_id(run_id,
                                       scientist,
                                       tag,
-                                      note)
+                                      note,
+                                      dict_exstra)
 
         data = load_by_id(run_id)
         x_data = data.to_xarray_dataset()
@@ -78,20 +83,33 @@ class Qdatalib:
         self.collection.update_one(filter, newvalues, upsert=True)
 
     def get_data_by_catalog(self, digt):
-        results = self.collection.find(digt)
-        ids = [result['_id'] for result in results]
-        if len(ids) > 1:
-            for result in results:
-                print(result)
-            return None
+        results = list(self.collection.find(digt))
 
-        return load_by_guid(ids[0])
+        tjek_number_of_results = self.number_of_results(results)
+
+        if tjek_number_of_results[0]:
+            return tjek_number_of_results[1]
+        else:
+            return load_by_guid(results[0]['_id'])
 
     def get_data_from_nc_by_catalog(self, digt):
-        results = self.collection.find(digt)
-        ids = [result['_id'] for result in results]
-        if len(ids) > 1:
-            print(ids)
-            return None
-        nc_path = os.path.join(self.target_dir, ids[0]+".nc")
-        return xr.open_dataset(nc_path)
+        results = list(self.collection.find(digt))
+        tjek_number_of_results = self.number_of_results(results)
+
+        if tjek_number_of_results[0]:
+            return tjek_number_of_results[1]
+        else:
+            nc_path = os.path.join(self.target_dir, results[0]['_id']+".nc")
+            return xr.open_dataset(nc_path)
+
+    def number_of_results(self, results):
+        number_of_results = len(results)
+        if number_of_results > 10:
+            print('The query returned {} results'.format(number_of_results))
+            return (True, results)
+        elif number_of_results > 1:
+            print('The query returend {} results'.format(number_of_results))
+            pp.pprint(results)
+            return (True, results)
+        else:
+            return (False, results)
