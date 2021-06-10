@@ -9,7 +9,7 @@ import versioneer
 
 readme_file_path = Path(__file__).absolute().parent / "README.md"
 
-required_packages = ['opencensus-ext-azure']
+required_packages = ['pymongo', ' dnspython', 'qcodes>=0.25']
 package_data = {"qdatalib": ["conf/telemetry.ini"] }
 
 
@@ -21,8 +21,8 @@ setup(
     install_requires=required_packages,
     author= "Rasmus Bjerregaard Christensen",
     author_email="rbcmail@gmail.com",
-    description="Library for Quantum Data[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D",
-    long_description=readme_file_path.open().read(),
+    description="Library for Quantum Data file Organization",
+    long_description=readme_file_path.open(encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     license="",
     package_data=package_data,
