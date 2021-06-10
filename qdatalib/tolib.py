@@ -1,23 +1,26 @@
 import os
 import pprint
+from typing import Tuple, Optional, Dict, Union, List, Any
 from pymongo import collection
-import xarray as xr
+import xarray as xr 
 from qcodes.dataset.database_extract_runs import extract_runs_into_db
-from qcodes.dataset.data_set import load_by_id, load_by_guid
+from qcodes.dataset.data_set import load_by_id, load_by_guid, DataSet
 pp = pprint.PrettyPrinter(indent=4)
 
 
 class Qdatalib:
 
-    def __init__(self, collection: collection = None,
-                 db_source: str = None,
-                 db_target: str = None,
-                 target_dir: str = None):
-
-        self.db_source = db_source
+    def __init__(self, mongo_collection: collection = None,
+                 db_source: Optional[str] = None,
+                 db_target: str = 'target.db',
+                 target_dir: str = '.') -> None:
+        if db_source is not None:
+            self.db_source = db_source
+        else:
+            self.db_source ='qcodesdefault'
         self.db_target = db_target
         self.target_dir = target_dir
-        self.collection = collection
+        self.mongo_collection: collection = mongo_collection
 
     def extract_run_into_db_and_catalog_by_id(self, run_id: int,
                                               scientist: str = 'john doe',
@@ -80,10 +83,10 @@ class Qdatalib:
         post.update(dict_exstra)
         filter = {"_id": data.guid}
         newvalues = {"$set": post}
-        self.collection.update_one(filter, newvalues, upsert=True)
+        self.mongo_collection.update_one(filter, newvalues, upsert=True)
 
-    def get_data_by_catalog(self, digt):
-        results = list(self.collection.find(digt))
+    def get_data_by_catalog(self, search_digt: Dict[str, Union[str, float]]) -> Union[List, DataSet]:
+        results = list(self.mongo_collection.find(search_digt))
 
         tjek_number_of_results = self.number_of_results(results)
 
@@ -92,8 +95,8 @@ class Qdatalib:
         else:
             return load_by_guid(results[0]['_id'])
 
-    def get_data_from_nc_by_catalog(self, digt):
-        results = list(self.collection.find(digt))
+    def get_data_from_nc_by_catalog(self, search_digt: Dict[str, Union[str, float]]) -> Union[List, Any]:
+        results = list(self.mongo_collection.find(search_digt))
         tjek_number_of_results = self.number_of_results(results)
 
         if tjek_number_of_results[0]:
@@ -102,7 +105,7 @@ class Qdatalib:
             nc_path = os.path.join(self.target_dir, results[0]['_id']+".nc")
             return xr.open_dataset(nc_path)
 
-    def number_of_results(self, results):
+    def number_of_results(self, results:List) -> Tuple[bool,List]:
         number_of_results = len(results)
         if number_of_results > 10:
             print('The query returned {} results'.format(number_of_results))
