@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.abspath('..'))
 project = "qdatalib"
 copyright = "Rasmus Bjerregaard Christensen"
 author = "Rasmus Bjerregaard Christensen"
-project_description = "Library for Quantum Data[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D"
+project_description = "Library for Quantum Data"
 
 # -- General configuration ---------------------------------------------------
 
@@ -347,9 +347,9 @@ intersphinx_mapping = {
     'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
     'matplotlib': ('https://matplotlib.org/', None),
     'python': ('https://docs.python.org/3.6', None),
-    'numpy': ('https://docs.scipy.org/doc/numpy', None),
+    'numpy': ('https://numpy.org/doc/stable/', None),
     'py': ('https://pylib.readthedocs.io/en/stable/', None),
-    'pyvisa': ('https://pyvisa.readthedocs.io/en/master/', None),
+    'pyvisa': ('https://pyvisa.readthedocs.io/en/stable/', None),
     'qcodes': ('https://qcodes.github.io/Qcodes/', None),
     'IPython': ('https://ipython.readthedocs.io/en/stable/', None)
 }
