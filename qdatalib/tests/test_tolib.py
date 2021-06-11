@@ -81,7 +81,7 @@ def test_uploade_to_catalog_by_id_defaults(tmp_qdatalib, data0):
 
     tmp_qdatalib.uploade_to_catalog_by_id(id=run_id)
 
-    x = tmp_qdatalib.collection.find_one()
+    x = tmp_qdatalib.mongo_collection.find_one()
 
     assert x['_id'] == data0.guid
     assert x['run_id'] == data0.captured_run_id
@@ -104,7 +104,7 @@ def test_uploade_to_catalog_by_id_given_arguments(tmp_qdatalib, data0):
                                          tag=tag,
                                          note=note)
 
-    x = tmp_qdatalib.collection.find_one()
+    x = tmp_qdatalib.mongo_collection.find_one()
 
     assert x['_id'] == data0.guid
     assert x['run_id'] == data0.captured_run_id
@@ -127,7 +127,7 @@ def test_uploade_to_catalog_by_id_add_dict(tmp_qdatalib, data0):
     tmp_qdatalib.uploade_to_catalog_by_id(id=run_id,
                                          dict_exstra=test_dict)
 
-    x = tmp_qdatalib.collection.find_one({'_id': guid})
+    x = tmp_qdatalib.mongo_collection.find_one({'_id': guid})
     for key in test_dict.keys():
         assert x[key] == test_dict[key]
 
