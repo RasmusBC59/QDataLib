@@ -1,0 +1,320 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>qdatalib.tolib &mdash; qdatalib 0.1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> qdatalib
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">qdatalib API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example_notebooks/index.html">Examples of using qdatalib</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">qdatalib</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>qdatalib.tolib</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for qdatalib.tolib</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pprint</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">collection</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span> 
+<span class="kn">from</span> <span class="nn">qcodes.dataset.database_extract_runs</span> <span class="kn">import</span> <span class="n">extract_runs_into_db</span>
+<span class="kn">from</span> <span class="nn">qcodes.dataset.data_set</span> <span class="kn">import</span> <span class="n">load_by_id</span><span class="p">,</span> <span class="n">load_by_guid</span><span class="p">,</span> <span class="n">DataSet</span>
+<span class="n">pp</span> <span class="o">=</span> <span class="n">pprint</span><span class="o">.</span><span class="n">PrettyPrinter</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Qdatalib"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib">[docs]</a><span class="k">class</span> <span class="nc">Qdatalib</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mongo_collection</span><span class="p">:</span> <span class="n">collection</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">db_source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">db_target</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;target.db&#39;</span><span class="p">,</span>
+                 <span class="n">target_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">db_source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_source</span> <span class="o">=</span> <span class="n">db_source</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_source</span> <span class="o">=</span><span class="s1">&#39;qcodesdefault&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_target</span> <span class="o">=</span> <span class="n">db_target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_dir</span> <span class="o">=</span> <span class="n">target_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mongo_collection</span><span class="p">:</span> <span class="n">collection</span> <span class="o">=</span> <span class="n">mongo_collection</span>
+
+<div class="viewcode-block" id="Qdatalib.extract_run_into_db_and_catalog_by_id"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.extract_run_into_db_and_catalog_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">extract_run_into_db_and_catalog_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                              <span class="n">scientist</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;john doe&#39;</span><span class="p">,</span>
+                                              <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                              <span class="n">note</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                              <span class="n">dict_exstra</span><span class="o">=</span><span class="p">{})</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">uploade_to_catalog_by_id</span><span class="p">(</span><span class="n">run_id</span><span class="p">,</span>
+                                      <span class="n">scientist</span><span class="p">,</span>
+                                      <span class="n">tag</span><span class="p">,</span>
+                                      <span class="n">note</span><span class="p">,</span>
+                                      <span class="n">dict_exstra</span><span class="p">)</span>
+
+        <span class="n">extract_runs_into_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_source</span><span class="p">,</span>  <span class="bp">self</span><span class="o">.</span><span class="n">db_target</span><span class="p">,</span> <span class="n">run_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Qdatalib.extract_run_into_nc_and_catalog"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.extract_run_into_nc_and_catalog">[docs]</a>    <span class="k">def</span> <span class="nf">extract_run_into_nc_and_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                        <span class="n">scientist</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;john doe&#39;</span><span class="p">,</span>
+                                        <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                        <span class="n">note</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                        <span class="n">dict_exstra</span><span class="o">=</span><span class="p">{}</span>
+                                        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">uploade_to_catalog_by_id</span><span class="p">(</span><span class="n">run_id</span><span class="p">,</span>
+                                      <span class="n">scientist</span><span class="p">,</span>
+                                      <span class="n">tag</span><span class="p">,</span>
+                                      <span class="n">note</span><span class="p">,</span>
+                                      <span class="n">dict_exstra</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">load_by_id</span><span class="p">(</span><span class="n">run_id</span><span class="p">)</span>
+        <span class="n">x_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to_xarray_dataset</span><span class="p">()</span>
+        <span class="n">nc_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">guid</span><span class="o">+</span><span class="s2">&quot;.nc&quot;</span><span class="p">)</span>
+        <span class="n">x_data</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">nc_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Qdatalib.uploade_to_catalog_by_id"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.uploade_to_catalog_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">uploade_to_catalog_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                 <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                 <span class="n">scientist</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;john doe&#39;</span><span class="p">,</span>
+                                 <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                 <span class="n">note</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                 <span class="n">dict_exstra</span><span class="o">=</span><span class="p">{})</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">load_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">path_to_db</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">run_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">captured_run_id</span>
+        <span class="n">exp_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">exp_id</span>
+        <span class="n">exp_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">exp_name</span>
+        <span class="n">run_time</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">run_timestamp</span><span class="p">()</span>
+        <span class="n">sample_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sample_name</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">[(</span><span class="n">par</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">par</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span> <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">()]</span>
+        <span class="n">post</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">guid</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">file</span><span class="p">,</span>
+                <span class="s1">&#39;run_id&#39;</span><span class="p">:</span> <span class="n">run_id</span><span class="p">,</span>
+                <span class="s1">&#39;exp_id&#39;</span><span class="p">:</span> <span class="n">exp_id</span><span class="p">,</span>
+                <span class="s1">&#39;exp_name&#39;</span><span class="p">:</span> <span class="n">exp_name</span><span class="p">,</span>
+                <span class="s1">&#39;run_time&#39;</span><span class="p">:</span> <span class="n">run_time</span><span class="p">,</span>
+                <span class="s1">&#39;sample_name&#39;</span><span class="p">:</span> <span class="n">sample_name</span><span class="p">,</span>
+                <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="n">parameters</span><span class="p">,</span>
+                <span class="s1">&#39;scientist&#39;</span><span class="p">:</span> <span class="n">scientist</span><span class="p">,</span>
+                <span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="n">tag</span><span class="p">,</span>
+                <span class="s1">&#39;note&#39;</span><span class="p">:</span> <span class="n">note</span><span class="p">}</span>
+        <span class="n">post</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dict_exstra</span><span class="p">)</span>
+        <span class="nb">filter</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">guid</span><span class="p">}</span>
+        <span class="n">newvalues</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$set&quot;</span><span class="p">:</span> <span class="n">post</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mongo_collection</span><span class="o">.</span><span class="n">update_one</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">newvalues</span><span class="p">,</span> <span class="n">upsert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Qdatalib.get_data_by_catalog"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.get_data_by_catalog">[docs]</a>    <span class="k">def</span> <span class="nf">get_data_by_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_digt</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">DataSet</span><span class="p">]:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mongo_collection</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">search_digt</span><span class="p">))</span>
+
+        <span class="n">tjek_number_of_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">tjek_number_of_results</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">tjek_number_of_results</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">load_by_guid</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;_id&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Qdatalib.get_data_from_nc_by_catalog"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.get_data_from_nc_by_catalog">[docs]</a>    <span class="k">def</span> <span class="nf">get_data_from_nc_by_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_digt</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mongo_collection</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">search_digt</span><span class="p">))</span>
+        <span class="n">tjek_number_of_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">tjek_number_of_results</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">tjek_number_of_results</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nc_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.nc&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">nc_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Qdatalib.number_of_results"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.number_of_results">[docs]</a>    <span class="k">def</span> <span class="nf">number_of_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span><span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span><span class="n">List</span><span class="p">]:</span>
+        <span class="n">number_of_results</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">number_of_results</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The query returned </span><span class="si">{}</span><span class="s1"> results&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">number_of_results</span><span class="p">))</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">number_of_results</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The query returend </span><span class="si">{}</span><span class="s1"> results&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">number_of_results</span><span class="p">))</span>
+            <span class="n">pp</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

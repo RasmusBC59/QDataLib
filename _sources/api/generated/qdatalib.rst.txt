@@ -14,10 +14,10 @@ Subpackages
 Submodules
 ----------
 
-qdatalib.hello\_world module
-----------------------------
+qdatalib.tolib module
+---------------------
 
-.. automodule:: qdatalib.hello_world
+.. automodule:: qdatalib.tolib
    :members:
    :undoc-members:
    :show-inheritance:

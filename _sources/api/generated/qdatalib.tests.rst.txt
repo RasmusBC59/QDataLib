@@ -20,10 +20,10 @@ qdatalib.tests.test\_config module
    :undoc-members:
    :show-inheritance:
 
-qdatalib.tests.test\_installation module
-----------------------------------------
+qdatalib.tests.test\_tolib module
+---------------------------------
 
-.. automodule:: qdatalib.tests.test_installation
+.. automodule:: qdatalib.tests.test_tolib
    :members:
    :undoc-members:
    :show-inheritance:
