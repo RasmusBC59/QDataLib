@@ -13,6 +13,7 @@ jobs:
     strategy:
       matrix:
         python-version: [ 3.8]
+        mongodb-version: ['4.4']
     env:
       DISPLAY: ':99.0'
 
@@ -35,6 +36,10 @@ jobs:
 
     - name: Run Mypy
       run: mypy qdatalib
+    - name: Start MongoDB
+      uses: supercharge/mongodb-github-action@1.6.0
+      with:
+        mongodb-version: ${{ matrix.mongodb-version }}
     - name: Test with pytest
       run: |
         pytest ./qdatalib/tests/
