@@ -35,7 +35,7 @@ class Qdatalib:
     """
 
     def __init__(self, mongo_collection: collection = None,
-                 db_local: Optional[str] = None,
+                 db_local: str = '',
                  db_shared: str = 'shared.db',
                  lib_dir: str = '.') -> None:
         self.db_local = db_local
