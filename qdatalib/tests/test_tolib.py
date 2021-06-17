@@ -30,12 +30,16 @@ def source_db_path(tmp_path):
     return source_db_path
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def source_db(source_db_path):
     initialise_or_create_database_at(source_db_path)
 
-
 @pytest.fixture
+def sourcetwo_db(tmp_path):
+    source_db_path = os.path.join(tmp_path, 'sourcetwo.db')
+    initialise_or_create_database_at(source_db_path)
+
+@pytest.fixture(scope="function")
 def set_up_station():
     exp = load_or_create_experiment('for_test', sample_name='no sample')
     yield
@@ -63,14 +67,14 @@ def data0(source_db, set_up_station, dac, dmm):
 
 
 @pytest.fixture
-def target_db_path(tmp_path):
-    return os.path.join(tmp_path, 'target.db')
+def shared_db_path(tmp_path):
+    return os.path.join(tmp_path, 'shared.db')
 
 
 @pytest.fixture
-def tmp_qdatalib(tmp_collection, source_db_path, target_db_path, tmp_path):
+def tmp_qdatalib(tmp_collection, source_db_path, shared_db_path, tmp_path):
 
-    qdatalib = Qdatalib(tmp_collection, source_db_path, target_db_path,
+    qdatalib = Qdatalib(tmp_collection, source_db_path, shared_db_path,
                         tmp_path)
     return qdatalib
 
@@ -136,23 +140,23 @@ def test_extract_run_into_db_and_catalog_by_id(tmp_qdatalib, data0):
     run_id = data0.run_id
     tmp_qdatalib.extract_run_into_db_and_catalog_by_id(run_id=run_id,)
 
-    source_conn = connect(tmp_qdatalib.db_source)
+    source_conn = connect(tmp_qdatalib.db_local)
     data_source = load_by_id(run_id, source_conn)
-    target_conn = connect(tmp_qdatalib.db_target)
+    shared_conn = connect(tmp_qdatalib.db_shared)
     guid = data_source.guid
-    data_target = load_by_guid(guid, target_conn)
+    data_shared = load_by_guid(guid, shared_conn)
 
-    assert data_source.the_same_dataset_as(data_target)
+    assert data_source.the_same_dataset_as(data_shared)
 
     source_conn.close()
-    target_conn.close()
+    shared_conn.close()
 
 
 def test_extract_run_into_nc_and_catalog(tmp_qdatalib, data0):
     run_id = data0.run_id
     guid = data0.guid
     tmp_qdatalib.extract_run_into_nc_and_catalog(run_id)
-    nc_path = os.path.join(tmp_qdatalib.target_dir, guid+".nc")
+    nc_path = os.path.join(tmp_qdatalib.lib_dir, guid+".nc")
     ncdata = xr.open_dataset(nc_path)
     assert ncdata == data0.to_xarray_dataset()
 
@@ -161,24 +165,24 @@ def test_get_data_by_catalog(tmp_qdatalib, data0):
     run_id = data0.run_id
     tmp_qdatalib.extract_run_into_db_and_catalog_by_id(run_id=run_id)
 
-    source_conn = connect(tmp_qdatalib.db_source)
+    source_conn = connect(tmp_qdatalib.db_local)
     data_source = load_by_id(run_id, source_conn)
-    target_conn = connect(tmp_qdatalib.db_target)
+    shared_conn = connect(tmp_qdatalib.db_shared)
     guid = data_source.guid
     serch_dict = {'_id': guid}
-    data_target = tmp_qdatalib.get_data_by_catalog(serch_dict)
+    data_shared = tmp_qdatalib.get_data_by_catalog(serch_dict)
 
-    assert data_source.the_same_dataset_as(data_target)
+    assert data_source.the_same_dataset_as(data_shared)
 
     source_conn.close()
-    target_conn.close()
+    shared_conn.close()
 
 
 def test_get_data_form_nc_by_catalog(tmp_qdatalib, data0):
     run_id = data0.run_id
     tmp_qdatalib.extract_run_into_nc_and_catalog(run_id=run_id)
 
-    source_conn = connect(tmp_qdatalib.db_source)
+    source_conn = connect(tmp_qdatalib.db_local)
     data_source = load_by_id(run_id, source_conn)
     guid = data_source.guid
     serch_dict = {'_id': guid}
@@ -187,3 +191,36 @@ def test_get_data_form_nc_by_catalog(tmp_qdatalib, data0):
     assert get_nc == data_source.to_xarray_dataset()
 
     source_conn.close()
+
+def test_read_and_write_different_databases(tmp_path, set_up_station, dac, dmm, tmp_qdatalib):
+    data_one = do1d(dac.ch1, 0, 1, 10, 0.01, dmm.v1, dmm.v2, show_progress=False)
+    data_one_guid = data_one[0].guid
+    data_one_l = load_by_guid(data_one_guid)
+    source_db_path = os.path.join(tmp_path, 'sourcetwo.db')
+    initialise_or_create_database_at(source_db_path)
+    exp = load_or_create_experiment(experiment_name='qdatalibtwo', sample_name="no sample")
+    data_two = do1d(dac.ch1, 0, 0.5, 10, 0.01, dmm.v1, dmm.v2, show_progress=False)
+    data_two_guid = data_two[0].guid
+    data_two_l = load_by_guid(data_two_guid)
+    tmp_qdatalib.db_local = data_one[0].path_to_db
+    tmp_collection.db_shared = os.path.join(tmp_path, 'sharedone.db')
+    tmp_qdatalib.extract_run_into_db_and_catalog_by_id(run_id=data_one[0].run_id)
+    tmp_qdatalib.db_local = data_two[0].path_to_db
+    tmp_collection.db_shared = os.path.join(tmp_path, 'sharedtwo.db')
+    tmp_qdatalib.extract_run_into_db_and_catalog_by_id(run_id=data_two[0].run_id)
+
+    tmp_collection.db_shared = os.path.join(tmp_path, 'sharedone.db')
+    data_shared_one = tmp_qdatalib.get_data_by_catalog({'_id': data_one_guid})
+
+
+    tmp_collection.db_shared = os.path.join(tmp_path, 'sharedtwo.db')
+    data_shared_two = tmp_qdatalib.get_data_by_catalog({'_id': data_two_guid})
+    # write to two different databses 
+    # and read from two diffetent databasen 
+   
+    assert data_one[0].the_same_dataset_as(data_one_l)
+    assert data_two[0].the_same_dataset_as(data_two_l)
+    assert not data_one_l.the_same_dataset_as(data_two_l)
+    assert data_one[0].the_same_dataset_as(data_shared_one)
+    assert not data_shared_one.the_same_dataset_as(data_shared_two)
+    #assert  data_two.the_same_dataset_as(data_shared)
