@@ -1,6 +1,10 @@
 # qdatalib 
 ### Note this project is under development, and will undergo a massive number of breaking changes 
+###TODO
 
+- implement glob.glob
+- export to csv
+- better handling of not existing files 
 # Description
 
 QDataLib is a library of wrappers around some of the most useful ”data”-functions in QCoDeS. The Idea of QDataLib is to keep track of your data files using a MongoDB database, and ease the export to other file formats than SQLite
@@ -13,7 +17,7 @@ $ cd QDataLib
 $ pip install .
 ```
 # Usage
-
+ see [here](https://rasmusbc59.github.io/QDataLib/)
 ## Running the tests
 
 If you have gotten 'qdatalib' from source, you may run the tests locally.
