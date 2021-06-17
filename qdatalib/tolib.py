@@ -10,6 +10,29 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 class Qdatalib:
+    """
+        Class for expporting QCoDeS data stored in SQLite in to other formats 
+        and organicing the exported data files using a MongoDB database
+
+        Attributes
+        ----------
+        mongo_collection:collection
+            The collection where information about the files are stored
+        db_local : str
+            path to the local QCoDeS SQLite database  
+        db_shared : str
+            path to shared QCoDeS SQLite database
+        lib_dir : str
+            path to directory to shared files 
+
+        Methods
+        -------
+        extract_run_into_db_and_catalog_by_id
+            extract data seleceted by run_id to shared SQLite database
+        extract_run_into_nc_and_catalog
+            extract data seleceted by run_id to shared netcdf file
+
+    """
 
     def __init__(self, mongo_collection: collection = None,
                  db_local: Optional[str] = None,
