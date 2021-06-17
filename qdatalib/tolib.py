@@ -48,6 +48,10 @@ class Qdatalib:
                                               tag: str = '',
                                               note: str = '',
                                               dict_exstra={}) -> None:
+        """
+
+        Extract data seleceted by run_id to shared SQLite database
+        """
 
         self.uploade_to_catalog_by_id(run_id,
                                       scientist,
@@ -63,6 +67,10 @@ class Qdatalib:
                                         note: str = '',
                                         dict_exstra={}
                                         ) -> None:
+        """
+
+        Extract data seleceted by run_id to shared netcdf file
+        """
 
         self.uploade_to_catalog_by_id(run_id,
                                       scientist,
@@ -83,6 +91,10 @@ class Qdatalib:
                                  tag: str = '',
                                  note: str = '',
                                  dict_exstra={}) -> None:
+        """
+
+        Upload to catalog
+        """
 
         data = self.load_by_id_local(id)
         file = data.path_to_db.split('\\')[-1]
