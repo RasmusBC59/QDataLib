@@ -187,12 +187,16 @@
     <span class="k">return</span> <span class="n">source_db_path</span></div>
 
 
-<div class="viewcode-block" id="source_db"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.source_db">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<div class="viewcode-block" id="source_db"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.source_db">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">source_db</span><span class="p">(</span><span class="n">source_db_path</span><span class="p">):</span>
     <span class="n">initialise_or_create_database_at</span><span class="p">(</span><span class="n">source_db_path</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="sourcetwo_db"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.sourcetwo_db">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">sourcetwo_db</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+    <span class="n">source_db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;sourcetwo.db&#39;</span><span class="p">)</span>
+    <span class="n">initialise_or_create_database_at</span><span class="p">(</span><span class="n">source_db_path</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="set_up_station"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.set_up_station">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<div class="viewcode-block" id="set_up_station"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.set_up_station">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">set_up_station</span><span class="p">():</span>
     <span class="n">exp</span> <span class="o">=</span> <span class="n">load_or_create_experiment</span><span class="p">(</span><span class="s1">&#39;for_test&#39;</span><span class="p">,</span> <span class="n">sample_name</span><span class="o">=</span><span class="s1">&#39;no sample&#39;</span><span class="p">)</span>
     <span class="k">yield</span>
@@ -219,15 +223,15 @@
     <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="target_db_path"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.target_db_path">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">target_db_path</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;target.db&#39;</span><span class="p">)</span></div>
+<div class="viewcode-block" id="shared_db_path"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.shared_db_path">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">shared_db_path</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;shared.db&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="tmp_qdatalib"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.tmp_qdatalib">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">tmp_qdatalib</span><span class="p">(</span><span class="n">tmp_collection</span><span class="p">,</span> <span class="n">source_db_path</span><span class="p">,</span> <span class="n">target_db_path</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">tmp_qdatalib</span><span class="p">(</span><span class="n">tmp_collection</span><span class="p">,</span> <span class="n">source_db_path</span><span class="p">,</span> <span class="n">shared_db_path</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
 
-    <span class="n">qdatalib</span> <span class="o">=</span> <span class="n">Qdatalib</span><span class="p">(</span><span class="n">tmp_collection</span><span class="p">,</span> <span class="n">source_db_path</span><span class="p">,</span> <span class="n">target_db_path</span><span class="p">,</span>
+    <span class="n">qdatalib</span> <span class="o">=</span> <span class="n">Qdatalib</span><span class="p">(</span><span class="n">tmp_collection</span><span class="p">,</span> <span class="n">source_db_path</span><span class="p">,</span> <span class="n">shared_db_path</span><span class="p">,</span>
                         <span class="n">tmp_path</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">qdatalib</span></div>
 
@@ -293,23 +297,23 @@
     <span class="n">run_id</span> <span class="o">=</span> <span class="n">data0</span><span class="o">.</span><span class="n">run_id</span>
     <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">extract_run_into_db_and_catalog_by_id</span><span class="p">(</span><span class="n">run_id</span><span class="o">=</span><span class="n">run_id</span><span class="p">,)</span>
 
-    <span class="n">source_conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">db_source</span><span class="p">)</span>
+    <span class="n">source_conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">db_local</span><span class="p">)</span>
     <span class="n">data_source</span> <span class="o">=</span> <span class="n">load_by_id</span><span class="p">(</span><span class="n">run_id</span><span class="p">,</span> <span class="n">source_conn</span><span class="p">)</span>
-    <span class="n">target_conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">db_target</span><span class="p">)</span>
+    <span class="n">shared_conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">db_shared</span><span class="p">)</span>
     <span class="n">guid</span> <span class="o">=</span> <span class="n">data_source</span><span class="o">.</span><span class="n">guid</span>
-    <span class="n">data_target</span> <span class="o">=</span> <span class="n">load_by_guid</span><span class="p">(</span><span class="n">guid</span><span class="p">,</span> <span class="n">target_conn</span><span class="p">)</span>
+    <span class="n">data_shared</span> <span class="o">=</span> <span class="n">load_by_guid</span><span class="p">(</span><span class="n">guid</span><span class="p">,</span> <span class="n">shared_conn</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="n">data_source</span><span class="o">.</span><span class="n">the_same_dataset_as</span><span class="p">(</span><span class="n">data_target</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">data_source</span><span class="o">.</span><span class="n">the_same_dataset_as</span><span class="p">(</span><span class="n">data_shared</span><span class="p">)</span>
 
     <span class="n">source_conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">target_conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+    <span class="n">shared_conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="test_extract_run_into_nc_and_catalog"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.test_extract_run_into_nc_and_catalog">[docs]</a><span class="k">def</span> <span class="nf">test_extract_run_into_nc_and_catalog</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="p">,</span> <span class="n">data0</span><span class="p">):</span>
     <span class="n">run_id</span> <span class="o">=</span> <span class="n">data0</span><span class="o">.</span><span class="n">run_id</span>
     <span class="n">guid</span> <span class="o">=</span> <span class="n">data0</span><span class="o">.</span><span class="n">guid</span>
     <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">extract_run_into_nc_and_catalog</span><span class="p">(</span><span class="n">run_id</span><span class="p">)</span>
-    <span class="n">nc_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">guid</span><span class="o">+</span><span class="s2">&quot;.nc&quot;</span><span class="p">)</span>
+    <span class="n">nc_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">lib_dir</span><span class="p">,</span> <span class="n">guid</span><span class="o">+</span><span class="s2">&quot;.nc&quot;</span><span class="p">)</span>
     <span class="n">ncdata</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">nc_path</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">ncdata</span> <span class="o">==</span> <span class="n">data0</span><span class="o">.</span><span class="n">to_xarray_dataset</span><span class="p">()</span></div>
 
@@ -318,24 +322,24 @@
     <span class="n">run_id</span> <span class="o">=</span> <span class="n">data0</span><span class="o">.</span><span class="n">run_id</span>
     <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">extract_run_into_db_and_catalog_by_id</span><span class="p">(</span><span class="n">run_id</span><span class="o">=</span><span class="n">run_id</span><span class="p">)</span>
 
-    <span class="n">source_conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">db_source</span><span class="p">)</span>
+    <span class="n">source_conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">db_local</span><span class="p">)</span>
     <span class="n">data_source</span> <span class="o">=</span> <span class="n">load_by_id</span><span class="p">(</span><span class="n">run_id</span><span class="p">,</span> <span class="n">source_conn</span><span class="p">)</span>
-    <span class="n">target_conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">db_target</span><span class="p">)</span>
+    <span class="n">shared_conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">db_shared</span><span class="p">)</span>
     <span class="n">guid</span> <span class="o">=</span> <span class="n">data_source</span><span class="o">.</span><span class="n">guid</span>
     <span class="n">serch_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">guid</span><span class="p">}</span>
-    <span class="n">data_target</span> <span class="o">=</span> <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">get_data_by_catalog</span><span class="p">(</span><span class="n">serch_dict</span><span class="p">)</span>
+    <span class="n">data_shared</span> <span class="o">=</span> <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">get_data_by_catalog</span><span class="p">(</span><span class="n">serch_dict</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="n">data_source</span><span class="o">.</span><span class="n">the_same_dataset_as</span><span class="p">(</span><span class="n">data_target</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">data_source</span><span class="o">.</span><span class="n">the_same_dataset_as</span><span class="p">(</span><span class="n">data_shared</span><span class="p">)</span>
 
     <span class="n">source_conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">target_conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+    <span class="n">shared_conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="test_get_data_form_nc_by_catalog"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.test_get_data_form_nc_by_catalog">[docs]</a><span class="k">def</span> <span class="nf">test_get_data_form_nc_by_catalog</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="p">,</span> <span class="n">data0</span><span class="p">):</span>
     <span class="n">run_id</span> <span class="o">=</span> <span class="n">data0</span><span class="o">.</span><span class="n">run_id</span>
     <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">extract_run_into_nc_and_catalog</span><span class="p">(</span><span class="n">run_id</span><span class="o">=</span><span class="n">run_id</span><span class="p">)</span>
 
-    <span class="n">source_conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">db_source</span><span class="p">)</span>
+    <span class="n">source_conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">db_local</span><span class="p">)</span>
     <span class="n">data_source</span> <span class="o">=</span> <span class="n">load_by_id</span><span class="p">(</span><span class="n">run_id</span><span class="p">,</span> <span class="n">source_conn</span><span class="p">)</span>
     <span class="n">guid</span> <span class="o">=</span> <span class="n">data_source</span><span class="o">.</span><span class="n">guid</span>
     <span class="n">serch_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">guid</span><span class="p">}</span>
@@ -344,6 +348,39 @@
     <span class="k">assert</span> <span class="n">get_nc</span> <span class="o">==</span> <span class="n">data_source</span><span class="o">.</span><span class="n">to_xarray_dataset</span><span class="p">()</span>
 
     <span class="n">source_conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="test_read_and_write_different_databases"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.test_read_and_write_different_databases">[docs]</a><span class="k">def</span> <span class="nf">test_read_and_write_different_databases</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="n">set_up_station</span><span class="p">,</span> <span class="n">dac</span><span class="p">,</span> <span class="n">dmm</span><span class="p">,</span> <span class="n">tmp_qdatalib</span><span class="p">):</span>
+    <span class="n">data_one</span> <span class="o">=</span> <span class="n">do1d</span><span class="p">(</span><span class="n">dac</span><span class="o">.</span><span class="n">ch1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">dmm</span><span class="o">.</span><span class="n">v1</span><span class="p">,</span> <span class="n">dmm</span><span class="o">.</span><span class="n">v2</span><span class="p">,</span> <span class="n">show_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">data_one_guid</span> <span class="o">=</span> <span class="n">data_one</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">guid</span>
+    <span class="n">data_one_l</span> <span class="o">=</span> <span class="n">load_by_guid</span><span class="p">(</span><span class="n">data_one_guid</span><span class="p">)</span>
+    <span class="n">source_db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;sourcetwo.db&#39;</span><span class="p">)</span>
+    <span class="n">initialise_or_create_database_at</span><span class="p">(</span><span class="n">source_db_path</span><span class="p">)</span>
+    <span class="n">exp</span> <span class="o">=</span> <span class="n">load_or_create_experiment</span><span class="p">(</span><span class="n">experiment_name</span><span class="o">=</span><span class="s1">&#39;qdatalibtwo&#39;</span><span class="p">,</span> <span class="n">sample_name</span><span class="o">=</span><span class="s2">&quot;no sample&quot;</span><span class="p">)</span>
+    <span class="n">data_two</span> <span class="o">=</span> <span class="n">do1d</span><span class="p">(</span><span class="n">dac</span><span class="o">.</span><span class="n">ch1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">dmm</span><span class="o">.</span><span class="n">v1</span><span class="p">,</span> <span class="n">dmm</span><span class="o">.</span><span class="n">v2</span><span class="p">,</span> <span class="n">show_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">data_two_guid</span> <span class="o">=</span> <span class="n">data_two</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">guid</span>
+    <span class="n">data_two_l</span> <span class="o">=</span> <span class="n">load_by_guid</span><span class="p">(</span><span class="n">data_two_guid</span><span class="p">)</span>
+    <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">db_local</span> <span class="o">=</span> <span class="n">data_one</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">path_to_db</span>
+    <span class="n">tmp_collection</span><span class="o">.</span><span class="n">db_shared</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;sharedone.db&#39;</span><span class="p">)</span>
+    <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">extract_run_into_db_and_catalog_by_id</span><span class="p">(</span><span class="n">run_id</span><span class="o">=</span><span class="n">data_one</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">run_id</span><span class="p">)</span>
+    <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">db_local</span> <span class="o">=</span> <span class="n">data_two</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">path_to_db</span>
+    <span class="n">tmp_collection</span><span class="o">.</span><span class="n">db_shared</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;sharedtwo.db&#39;</span><span class="p">)</span>
+    <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">extract_run_into_db_and_catalog_by_id</span><span class="p">(</span><span class="n">run_id</span><span class="o">=</span><span class="n">data_two</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">run_id</span><span class="p">)</span>
+
+    <span class="n">tmp_collection</span><span class="o">.</span><span class="n">db_shared</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;sharedone.db&#39;</span><span class="p">)</span>
+    <span class="n">data_shared_one</span> <span class="o">=</span> <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">get_data_by_catalog</span><span class="p">({</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">data_one_guid</span><span class="p">})</span>
+
+
+    <span class="n">tmp_collection</span><span class="o">.</span><span class="n">db_shared</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;sharedtwo.db&#39;</span><span class="p">)</span>
+    <span class="n">data_shared_two</span> <span class="o">=</span> <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">get_data_by_catalog</span><span class="p">({</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">data_two_guid</span><span class="p">})</span>
+    <span class="c1"># write to two different databses </span>
+    <span class="c1"># and read from two diffetent databasen </span>
+   
+    <span class="k">assert</span> <span class="n">data_one</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">the_same_dataset_as</span><span class="p">(</span><span class="n">data_one_l</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">data_two</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">the_same_dataset_as</span><span class="p">(</span><span class="n">data_two_l</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">data_one_l</span><span class="o">.</span><span class="n">the_same_dataset_as</span><span class="p">(</span><span class="n">data_two_l</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">data_one</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">the_same_dataset_as</span><span class="p">(</span><span class="n">data_shared_one</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">data_shared_one</span><span class="o">.</span><span class="n">the_same_dataset_as</span><span class="p">(</span><span class="n">data_shared_two</span><span class="p">)</span></div>
+    <span class="c1">#assert  data_two.the_same_dataset_as(data_shared)</span>
 </pre></div>
 
            </div>

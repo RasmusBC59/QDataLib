@@ -2,7 +2,7 @@
 qdatalib
 *****************************************************************
 
-Library for Quantum Data[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D
+Library for Quantum Data
 
 
 Documentation
