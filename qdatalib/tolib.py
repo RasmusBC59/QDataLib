@@ -10,34 +10,27 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 class Qdatalib:
-    """
-        Class for expporting QCoDeS data stored in SQLite in to other formats 
+    """Class for expporting QCoDeS data stored in SQLite in to other formats 
         and organicing the exported data files using a MongoDB database
 
-        Attributes
-        ----------
-        mongo_collection:collection
-            The collection where information about the files are stored
-        db_local : str
-            path to the local QCoDeS SQLite database  
-        db_shared : str
-            path to shared QCoDeS SQLite database
-        lib_dir : str
-            path to directory to shared files 
-
-        Methods
-        -------
-        extract_run_into_db_and_catalog_by_id
-            extract data seleceted by run_id to shared SQLite database
-        extract_run_into_nc_and_catalog
-            extract data seleceted by run_id to shared netcdf file
-
     """
+
 
     def __init__(self, mongo_collection: collection = None,
                  db_local: str = '',
                  db_shared: str = 'shared.db',
                  lib_dir: str = '.') -> None:
+        """[summary]
+
+        :param mongo_collection: The collection where information about the files are stored, defaults to None
+        :type mongo_collection: collection, optional
+        :param db_local: path to the local QCoDeS SQLite databas, defaults to ''
+        :type db_local: str, optional
+        :param db_shared: path to shared QCoDeS SQLite database, defaults to 'shared.db'
+        :type db_shared: str, optional
+        :param lib_dir: path to directory to shared files, defaults to '.'
+        :type lib_dir: str, optional
+        """
         self.db_local = db_local
         self.db_shared = db_shared
         self.lib_dir = lib_dir
