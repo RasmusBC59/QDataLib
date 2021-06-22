@@ -1,6 +1,8 @@
 import os
+import glob
 import pprint
 import qcodes as qc
+import pandas as pd
 from typing import Tuple, Optional, Dict, Union, List, Any
 from pymongo import collection
 import xarray as xr 
@@ -78,6 +80,31 @@ class Qdatalib:
 
         return None
 
+    def extract_run_into_csv_and_catalog(self, run_id: int,
+                                        scientist: str = 'john doe',
+                                        tag: str = '',
+                                        note: str = '',
+                                        dict_exstra={}
+                                        ) -> None:
+        """
+
+        Extract data seleceted by run_id to shared csv file
+        """
+
+        self.uploade_to_catalog_by_id(run_id,
+                                      scientist,
+                                      tag,
+                                      note,
+                                      dict_exstra)
+
+        data = self.load_by_id_local(run_id)
+        csv_data = data.to_pandas_dataframe()
+        csv_data.reset_index(inplace=True)
+        csv_path = os.path.join(self.lib_dir, data.guid+".csv")
+        csv_data.to_csv(csv_path)
+
+        return None        
+
     def uploade_to_catalog_by_id(self,
                                  id: int,
                                  scientist: str = 'john doe',
@@ -131,8 +158,20 @@ class Qdatalib:
         if tjek_number_of_results[0]:
             return tjek_number_of_results[1]
         else:
-            nc_path = os.path.join(self.lib_dir, results[0]['_id']+".nc")
-            return xr.open_dataset(nc_path)
+            nc_path = glob.glob(str(self.lib_dir) + "/**/" + results[0]['_id']+".nc", recursive = True)
+            #nc_path = os.path.join(self.lib_dir, results[0]['_id']+".nc")
+            return xr.open_dataset(nc_path[0])
+
+    def get_data_from_csv_by_catalog(self, search_digt: Dict[str, Union[str, float]]) -> Union[List, Any]:
+        results = list(self.mongo_collection.find(search_digt))
+        tjek_number_of_results = self.number_of_results(results)
+
+        if tjek_number_of_results[0]:
+            return tjek_number_of_results[1]
+        else:
+            csv_path = glob.glob(str(self.lib_dir) + "/**/" + results[0]['_id']+".csv", recursive = True)
+            #nc_path = os.path.join(self.lib_dir, results[0]['_id']+".nc")
+            return pd.read_csv(csv_path[0], index_col=0)
 
     def number_of_results(self, results: List) -> Tuple[bool,List]:
         number_of_results = len(results)
