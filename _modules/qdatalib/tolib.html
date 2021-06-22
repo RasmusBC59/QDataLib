@@ -156,8 +156,10 @@
             
   <h1>Source code for qdatalib.tolib</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">glob</span>
 <span class="kn">import</span> <span class="nn">pprint</span>
 <span class="kn">import</span> <span class="nn">qcodes</span> <span class="k">as</span> <span class="nn">qc</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">collection</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span> 
@@ -235,6 +237,31 @@
 
         <span class="k">return</span> <span class="kc">None</span></div>
 
+<div class="viewcode-block" id="Qdatalib.extract_run_into_csv_and_catalog"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.extract_run_into_csv_and_catalog">[docs]</a>    <span class="k">def</span> <span class="nf">extract_run_into_csv_and_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                        <span class="n">scientist</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;john doe&#39;</span><span class="p">,</span>
+                                        <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                        <span class="n">note</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                        <span class="n">dict_exstra</span><span class="o">=</span><span class="p">{}</span>
+                                        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Extract data seleceted by run_id to shared csv file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">uploade_to_catalog_by_id</span><span class="p">(</span><span class="n">run_id</span><span class="p">,</span>
+                                      <span class="n">scientist</span><span class="p">,</span>
+                                      <span class="n">tag</span><span class="p">,</span>
+                                      <span class="n">note</span><span class="p">,</span>
+                                      <span class="n">dict_exstra</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_by_id_local</span><span class="p">(</span><span class="n">run_id</span><span class="p">)</span>
+        <span class="n">csv_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to_pandas_dataframe</span><span class="p">()</span>
+        <span class="n">csv_data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">csv_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lib_dir</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">guid</span><span class="o">+</span><span class="s2">&quot;.csv&quot;</span><span class="p">)</span>
+        <span class="n">csv_data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">None</span>        </div>
+
 <div class="viewcode-block" id="Qdatalib.uploade_to_catalog_by_id"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.uploade_to_catalog_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">uploade_to_catalog_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                  <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                                  <span class="n">scientist</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;john doe&#39;</span><span class="p">,</span>
@@ -288,8 +315,20 @@
         <span class="k">if</span> <span class="n">tjek_number_of_results</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">tjek_number_of_results</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">nc_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lib_dir</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.nc&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">nc_path</span><span class="p">)</span></div>
+            <span class="n">nc_path</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lib_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/**/&quot;</span> <span class="o">+</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.nc&quot;</span><span class="p">,</span> <span class="n">recursive</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="c1">#nc_path = os.path.join(self.lib_dir, results[0][&#39;_id&#39;]+&quot;.nc&quot;)</span>
+            <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">nc_path</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Qdatalib.get_data_from_csv_by_catalog"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.get_data_from_csv_by_catalog">[docs]</a>    <span class="k">def</span> <span class="nf">get_data_from_csv_by_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_digt</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mongo_collection</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">search_digt</span><span class="p">))</span>
+        <span class="n">tjek_number_of_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">tjek_number_of_results</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">tjek_number_of_results</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">csv_path</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lib_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/**/&quot;</span> <span class="o">+</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="n">recursive</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="c1">#nc_path = os.path.join(self.lib_dir, results[0][&#39;_id&#39;]+&quot;.nc&quot;)</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Qdatalib.number_of_results"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.number_of_results">[docs]</a>    <span class="k">def</span> <span class="nf">number_of_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span><span class="n">List</span><span class="p">]:</span>
         <span class="n">number_of_results</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>

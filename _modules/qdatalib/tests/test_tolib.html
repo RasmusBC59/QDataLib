@@ -159,6 +159,7 @@
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">qcodes</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">initialise_or_create_database_at</span><span class="p">,</span>
     <span class="n">load_by_guid</span><span class="p">,</span>
@@ -315,7 +316,7 @@
     <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">extract_run_into_nc_and_catalog</span><span class="p">(</span><span class="n">run_id</span><span class="p">)</span>
     <span class="n">nc_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">lib_dir</span><span class="p">,</span> <span class="n">guid</span><span class="o">+</span><span class="s2">&quot;.nc&quot;</span><span class="p">)</span>
     <span class="n">ncdata</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">nc_path</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">ncdata</span> <span class="o">==</span> <span class="n">data0</span><span class="o">.</span><span class="n">to_xarray_dataset</span><span class="p">()</span></div>
+    <span class="k">assert</span> <span class="n">ncdata</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">data0</span><span class="o">.</span><span class="n">to_xarray_dataset</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="test_get_data_by_catalog"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.test_get_data_by_catalog">[docs]</a><span class="k">def</span> <span class="nf">test_get_data_by_catalog</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="p">,</span> <span class="n">data0</span><span class="p">):</span>
@@ -345,7 +346,7 @@
     <span class="n">serch_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">guid</span><span class="p">}</span>
     <span class="n">get_nc</span> <span class="o">=</span> <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">get_data_from_nc_by_catalog</span><span class="p">(</span><span class="n">serch_dict</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="n">get_nc</span> <span class="o">==</span> <span class="n">data_source</span><span class="o">.</span><span class="n">to_xarray_dataset</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">get_nc</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">data_source</span><span class="o">.</span><span class="n">to_xarray_dataset</span><span class="p">())</span>
 
     <span class="n">source_conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
@@ -381,6 +382,51 @@
     <span class="k">assert</span> <span class="n">data_one</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">the_same_dataset_as</span><span class="p">(</span><span class="n">data_shared_one</span><span class="p">)</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">data_shared_one</span><span class="o">.</span><span class="n">the_same_dataset_as</span><span class="p">(</span><span class="n">data_shared_two</span><span class="p">)</span></div>
     <span class="c1">#assert  data_two.the_same_dataset_as(data_shared)</span>
+
+<div class="viewcode-block" id="test_find_file_in_subfolder"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.test_find_file_in_subfolder">[docs]</a><span class="k">def</span> <span class="nf">test_find_file_in_subfolder</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="p">,</span> <span class="n">data0</span><span class="p">):</span>
+    <span class="n">run_id</span> <span class="o">=</span> <span class="n">data0</span><span class="o">.</span><span class="n">run_id</span>
+
+    <span class="n">tmp_lib_dir</span> <span class="o">=</span> <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">lib_dir</span>
+    <span class="n">tmp_lib_sub_dir_path</span> <span class="o">=</span>  <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_lib_dir</span><span class="p">,</span> <span class="s1">&#39;sub/&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">tmp_lib_sub_dir_path</span><span class="p">)</span>
+    
+    <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">lib_dir</span> <span class="o">=</span> <span class="n">tmp_lib_sub_dir_path</span> 
+    <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">extract_run_into_nc_and_catalog</span><span class="p">(</span><span class="n">run_id</span><span class="o">=</span><span class="n">run_id</span><span class="p">)</span>
+    
+    <span class="n">nc_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_lib_sub_dir_path</span><span class="p">,</span> <span class="n">data0</span><span class="o">.</span><span class="n">guid</span><span class="o">+</span><span class="s2">&quot;.nc&quot;</span><span class="p">)</span>
+    
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">nc_path</span><span class="p">)</span>
+    <span class="n">x_one</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">nc_path</span><span class="p">)</span>
+
+    <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">lib_dir</span> <span class="o">=</span> <span class="n">tmp_lib_dir</span>
+
+    <span class="n">guid</span> <span class="o">=</span> <span class="n">data0</span><span class="o">.</span><span class="n">guid</span>
+    <span class="n">serch_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">guid</span><span class="p">}</span>
+    <span class="n">get_nc</span> <span class="o">=</span> <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">get_data_from_nc_by_catalog</span><span class="p">(</span><span class="n">serch_dict</span><span class="p">)</span>
+    
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">tmp_lib_dir</span> <span class="o">==</span> <span class="n">tmp_lib_sub_dir_path</span>
+    <span class="k">assert</span> <span class="n">get_nc</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">x_one</span><span class="p">)</span></div>
+   
+<div class="viewcode-block" id="test_extract_run_into_csv_and_catalog"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.test_extract_run_into_csv_and_catalog">[docs]</a><span class="k">def</span> <span class="nf">test_extract_run_into_csv_and_catalog</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="p">,</span> <span class="n">data0</span><span class="p">):</span>
+    <span class="n">run_id</span> <span class="o">=</span> <span class="n">data0</span><span class="o">.</span><span class="n">run_id</span>
+    <span class="n">guid</span> <span class="o">=</span> <span class="n">data0</span><span class="o">.</span><span class="n">guid</span>
+    <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">extract_run_into_csv_and_catalog</span><span class="p">(</span><span class="n">run_id</span><span class="p">)</span>
+    <span class="n">csv_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">lib_dir</span><span class="p">,</span> <span class="n">guid</span><span class="o">+</span><span class="s2">&quot;.csv&quot;</span><span class="p">)</span>
+    <span class="n">csv_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">df_data</span> <span class="o">=</span>  <span class="n">data0</span><span class="o">.</span><span class="n">to_pandas_dataframe</span><span class="p">()</span>
+    <span class="n">df_data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">pd</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_frame_equal</span><span class="p">(</span><span class="n">csv_data</span><span class="p">,</span> <span class="n">df_data</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="test_get_data_from_csv_by_catalog"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.test_get_data_from_csv_by_catalog">[docs]</a><span class="k">def</span> <span class="nf">test_get_data_from_csv_by_catalog</span><span class="p">(</span><span class="n">tmp_qdatalib</span><span class="p">,</span> <span class="n">data0</span><span class="p">):</span>
+    <span class="n">run_id</span> <span class="o">=</span> <span class="n">data0</span><span class="o">.</span><span class="n">run_id</span>
+    <span class="n">guid</span> <span class="o">=</span> <span class="n">data0</span><span class="o">.</span><span class="n">guid</span>
+    <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">extract_run_into_csv_and_catalog</span><span class="p">(</span><span class="n">run_id</span><span class="p">)</span>
+    <span class="n">serch_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">guid</span><span class="p">}</span>
+    <span class="n">csv_data</span> <span class="o">=</span> <span class="n">tmp_qdatalib</span><span class="o">.</span><span class="n">get_data_from_csv_by_catalog</span><span class="p">(</span><span class="n">serch_dict</span><span class="p">)</span>
+    <span class="n">df_data</span> <span class="o">=</span>  <span class="n">data0</span><span class="o">.</span><span class="n">to_pandas_dataframe</span><span class="p">()</span>
+    <span class="n">df_data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">pd</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_frame_equal</span><span class="p">(</span><span class="n">csv_data</span><span class="p">,</span> <span class="n">df_data</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span></div>
 </pre></div>
 
            </div>
