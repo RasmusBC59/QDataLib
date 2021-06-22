@@ -2,6 +2,7 @@ import pymongo
 import pytest
 import os
 import xarray as xr
+import pandas as pd
 from qcodes import (
     initialise_or_create_database_at,
     load_by_guid,
@@ -158,7 +159,7 @@ def test_extract_run_into_nc_and_catalog(tmp_qdatalib, data0):
     tmp_qdatalib.extract_run_into_nc_and_catalog(run_id)
     nc_path = os.path.join(tmp_qdatalib.lib_dir, guid+".nc")
     ncdata = xr.open_dataset(nc_path)
-    assert ncdata == data0.to_xarray_dataset()
+    assert ncdata.equals(data0.to_xarray_dataset())
 
 
 def test_get_data_by_catalog(tmp_qdatalib, data0):
@@ -188,7 +189,7 @@ def test_get_data_form_nc_by_catalog(tmp_qdatalib, data0):
     serch_dict = {'_id': guid}
     get_nc = tmp_qdatalib.get_data_from_nc_by_catalog(serch_dict)
 
-    assert get_nc == data_source.to_xarray_dataset()
+    assert get_nc.equals(data_source.to_xarray_dataset())
 
     source_conn.close()
 
@@ -224,3 +225,48 @@ def test_read_and_write_different_databases(tmp_path, set_up_station, dac, dmm, 
     assert data_one[0].the_same_dataset_as(data_shared_one)
     assert not data_shared_one.the_same_dataset_as(data_shared_two)
     #assert  data_two.the_same_dataset_as(data_shared)
+
+def test_find_file_in_subfolder(tmp_qdatalib, data0):
+    run_id = data0.run_id
+
+    tmp_lib_dir = tmp_qdatalib.lib_dir
+    tmp_lib_sub_dir_path =  os.path.join(tmp_lib_dir, 'sub/')
+    os.mkdir(tmp_lib_sub_dir_path)
+    
+    tmp_qdatalib.lib_dir = tmp_lib_sub_dir_path 
+    tmp_qdatalib.extract_run_into_nc_and_catalog(run_id=run_id)
+    
+    nc_path = os.path.join(tmp_lib_sub_dir_path, data0.guid+".nc")
+    
+    assert os.path.exists(nc_path)
+    x_one = xr.open_dataset(nc_path)
+
+    tmp_qdatalib.lib_dir = tmp_lib_dir
+
+    guid = data0.guid
+    serch_dict = {'_id': guid}
+    get_nc = tmp_qdatalib.get_data_from_nc_by_catalog(serch_dict)
+    
+    assert not tmp_lib_dir == tmp_lib_sub_dir_path
+    assert get_nc.equals(x_one)
+   
+def test_extract_run_into_csv_and_catalog(tmp_qdatalib, data0):
+    run_id = data0.run_id
+    guid = data0.guid
+    tmp_qdatalib.extract_run_into_csv_and_catalog(run_id)
+    csv_path = os.path.join(tmp_qdatalib.lib_dir, guid+".csv")
+    csv_data = pd.read_csv(csv_path, index_col=0)
+    df_data =  data0.to_pandas_dataframe()
+    df_data.reset_index(inplace=True)
+    assert pd.testing.assert_frame_equal(csv_data, df_data) == None
+
+
+def test_get_data_from_csv_by_catalog(tmp_qdatalib, data0):
+    run_id = data0.run_id
+    guid = data0.guid
+    tmp_qdatalib.extract_run_into_csv_and_catalog(run_id)
+    serch_dict = {'_id': guid}
+    csv_data = tmp_qdatalib.get_data_from_csv_by_catalog(serch_dict)
+    df_data =  data0.to_pandas_dataframe()
+    df_data.reset_index(inplace=True)
+    assert pd.testing.assert_frame_equal(csv_data, df_data) == None
