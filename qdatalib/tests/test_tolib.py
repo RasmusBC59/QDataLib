@@ -12,7 +12,7 @@ from qcodes.tests.instrument_mocks import (DummyInstrument,
                                            DummyInstrumentWithMeasurement)
 from qcodes.utils.dataset.doNd import do1d
 from qcodes.dataset.sqlite.database import connect
-from qdatalib.tolib import Qdatalib
+from qdatalib.tolib import Qdatalib 
 
 
 @pytest.fixture
@@ -173,6 +173,7 @@ def test_get_data_by_catalog(tmp_qdatalib, data0):
     serch_dict = {'_id': guid}
     data_shared = tmp_qdatalib.get_data_by_catalog(serch_dict)
 
+    assert data_shared.guid == data_source.guid 
     assert data_source.the_same_dataset_as(data_shared)
 
     source_conn.close()
@@ -197,24 +198,25 @@ def test_read_and_write_different_databases(tmp_path, set_up_station, dac, dmm, 
     data_one = do1d(dac.ch1, 0, 1, 10, 0.01, dmm.v1, dmm.v2, show_progress=False)
     data_one_guid = data_one[0].guid
     data_one_l = load_by_guid(data_one_guid)
+    
     source_db_path = os.path.join(tmp_path, 'sourcetwo.db')
     initialise_or_create_database_at(source_db_path)
     exp = load_or_create_experiment(experiment_name='qdatalibtwo', sample_name="no sample")
     data_two = do1d(dac.ch1, 0, 0.5, 10, 0.01, dmm.v1, dmm.v2, show_progress=False)
     data_two_guid = data_two[0].guid
     data_two_l = load_by_guid(data_two_guid)
+
     tmp_qdatalib.db_local = data_one[0].path_to_db
-    tmp_collection.db_shared = os.path.join(tmp_path, 'sharedone.db')
+    tmp_qdatalib.db_shared = os.path.join(tmp_path, 'sharedone.db')
     tmp_qdatalib.extract_run_into_db_and_catalog_by_id(run_id=data_one[0].run_id)
+
     tmp_qdatalib.db_local = data_two[0].path_to_db
-    tmp_collection.db_shared = os.path.join(tmp_path, 'sharedtwo.db')
+    tmp_qdatalib.db_shared = os.path.join(tmp_path, 'sharedtwo.db')
     tmp_qdatalib.extract_run_into_db_and_catalog_by_id(run_id=data_two[0].run_id)
 
-    tmp_collection.db_shared = os.path.join(tmp_path, 'sharedone.db')
+    tmp_qdatalib.db_shared = os.path.join(tmp_path, 'shared_random.db')
+
     data_shared_one = tmp_qdatalib.get_data_by_catalog({'_id': data_one_guid})
-
-
-    tmp_collection.db_shared = os.path.join(tmp_path, 'sharedtwo.db')
     data_shared_two = tmp_qdatalib.get_data_by_catalog({'_id': data_two_guid})
     # write to two different databses 
     # and read from two diffetent databasen 
@@ -224,7 +226,7 @@ def test_read_and_write_different_databases(tmp_path, set_up_station, dac, dmm, 
     assert not data_one_l.the_same_dataset_as(data_two_l)
     assert data_one[0].the_same_dataset_as(data_shared_one)
     assert not data_shared_one.the_same_dataset_as(data_shared_two)
-    #assert  data_two.the_same_dataset_as(data_shared)
+    assert  data_two[0].the_same_dataset_as(data_shared_two)
 
 def test_find_file_in_subfolder(tmp_qdatalib, data0):
     run_id = data0.run_id

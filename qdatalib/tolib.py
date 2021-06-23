@@ -1,11 +1,13 @@
 import os
 import glob
+import re
 import pprint
 import qcodes as qc
 import pandas as pd
 from typing import Tuple, Optional, Dict, Union, List, Any
 from pymongo import collection
 import xarray as xr 
+from qcodes.dataset.sqlite.database import connect
 from qcodes.dataset.database_extract_runs import extract_runs_into_db
 from qcodes.dataset.data_set import load_by_id, load_by_guid, DataSet
 pp = pprint.PrettyPrinter(indent=4)
@@ -54,7 +56,9 @@ class Qdatalib:
                                       note,
                                       dict_exstra)
 
+        shared_conn = connect(self.db_shared)
         extract_runs_into_db(self.db_local,  self.db_shared, run_id)
+        shared_conn.close()
 
     def extract_run_into_nc_and_catalog(self, run_id: int,
                                         scientist: str = 'john doe',
@@ -117,14 +121,15 @@ class Qdatalib:
         """
 
         data = self.load_by_id_local(id)
-        file = data.path_to_db.split('\\')[-1]
+        original_path = self.db_local 
+        file = re.split('/|\\\\', self.db_shared)[-1]
         run_id = data.captured_run_id
         exp_id = data.exp_id
         exp_name = data.exp_name
         run_time = data.run_timestamp()
         sample_name = data.sample_name
         parameters = [(par.name, par.unit) for par in data.get_parameters()]
-        post = {"_id": data.guid, 'file': file,
+        post = {"_id": data.guid, 'file': file, original_path: 'original_path', 
                 'run_id': run_id,
                 'exp_id': exp_id,
                 'exp_name': exp_name,
@@ -148,7 +153,8 @@ class Qdatalib:
         if tjek_number_of_results[0]:
             return tjek_number_of_results[1]
         else:
-            return self.load_shared(results[0]['_id'])
+            file_path = glob.glob(str(self.lib_dir) + "/**/" + results[0]['file'], recursive = True)
+            return self.load_shared(results[0]['_id'], file_path[0])
 
 
     def get_data_from_nc_by_catalog(self, search_digt: Dict[str, Union[str, float]]) -> Union[List, Any]:
@@ -186,15 +192,20 @@ class Qdatalib:
             return (False, results)
 
     def load_by_id_local(self, id: int) -> DataSet:
-        db_location_stored = qc.config.core.db_location
-        qc.config["core"]["db_location"] = self.db_local
-        data = load_by_id(id)
-        qc.config["core"]["db_location"] = db_location_stored
+
+        local_conn = connect(self.db_local)
+        data = load_by_id(id,local_conn)
+        
         return data
 
-    def load_shared(self, guid: str) -> DataSet:
-        db_location_stored = qc.config.core.db_location
-        qc.config["core"]["db_location"] = self.db_shared
-        data = load_by_guid(guid)
-        qc.config["core"]["db_location"] = db_location_stored
+    def load_shared(self, guid: str, db_path: str) -> DataSet:
+
+        #try:
+        shared_conn = connect(db_path) # as shared_conn:
+        data = load_by_guid(guid, shared_conn)
+            
+        #finally:
+         #   shared_conn.close()
+          #  shared_conn = connect(self.db_shared)
+            #del shared_conn
         return data
