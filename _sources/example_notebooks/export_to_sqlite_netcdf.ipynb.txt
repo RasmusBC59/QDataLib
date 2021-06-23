@@ -26,6 +26,7 @@
     "import tempfile\n",
     "import os\n",
     "import time\n",
+    "import pandas as pd\n",
     "from qdatalib.tolib import Qdatalib\n",
     "from qcodes.tests.instrument_mocks import DummyInstrument, DummyInstrumentWithMeasurement\n",
     "from qcodes import load_or_create_experiment, initialise_or_create_database_at\n",
@@ -58,8 +59,8 @@
     "    os.mkdir(my_path)\n",
     "except Exception as e:\n",
     "    print(e)\n",
-    "shared_path_db = os.path.join(my_path,'shared')\n",
-    "local_path_db = os.path.join(my_path, 'qdatalib_tutorial.db')\n",
+    "    \n",
+    "\n",
     "\n"
    ]
   },
@@ -116,11 +117,14 @@
    },
    "outputs": [],
    "source": [
+    "shared_dir = \"C:\\\\Users\\\\rbcma\\\\Spin Qubit Dropbox\\\\qdatalib QDev\\\\Test\"\n",
+    "shared_path_db = os.path.join(shared_dir,'shared.db')\n",
+    "local_path_db = os.path.join(my_path, 'qdatalib_tutorial.db')\n",
     "\n",
     "qdatalib = Qdatalib(collection,\n",
     "                    local_path_db,\n",
     "                    shared_path_db,\n",
-    "                    my_path)"
+    "                    shared_dir)"
    ]
   },
   {
@@ -166,7 +170,7 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Starting experimental run with id: 9. \n"
+      "Starting experimental run with id: 13. \n"
      ]
     }
    ],
@@ -200,19 +204,35 @@
      "slide_type": "-"
     }
    },
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Upgrading database; v0 -> v1: : 0it [00:00, ?it/s]\n",
+      "Upgrading database; v1 -> v2: 100%|█████████████████████████████████████████████████████| 1/1 [00:00<00:00, 251.10it/s]\n",
+      "Upgrading database; v2 -> v3: : 0it [00:00, ?it/s]\n",
+      "Upgrading database; v3 -> v4: : 0it [00:00, ?it/s]\n",
+      "Upgrading database; v4 -> v5: 100%|█████████████████████████████████████████████████████| 1/1 [00:00<00:00, 200.44it/s]\n",
+      "Upgrading database; v5 -> v6: : 0it [00:00, ?it/s]\n",
+      "Upgrading database; v6 -> v7: 100%|█████████████████████████████████████████████████████| 1/1 [00:00<00:00, 143.24it/s]\n",
+      "Upgrading database; v7 -> v8: 100%|█████████████████████████████████████████████████████| 1/1 [00:00<00:00, 250.56it/s]\n",
+      "Upgrading database; v8 -> v9: 100%|█████████████████████████████████████████████████████| 1/1 [00:00<00:00, 200.59it/s]\n"
+     ]
+    }
+   ],
    "source": [
     "scientist = 'John doe'\n",
     "tag = 'double dot',\n",
     "note = 'This happened',\n",
-    "dict_exstra = {'my_field': 'Group A', 'my_Score': 1}\n",
+    "dict_exstra = {'my_field': 'Group K', 'my_Score': 2, 'Presented':'group meeting June 24, 2021'}\n",
     "\n",
     "\n",
     "qdatalib.extract_run_into_db_and_catalog_by_id(run_id=run_id,\n",
     "                                                   scientist=scientist,\n",
     "                                                   tag=tag,\n",
     "                                                   note=note,\n",
-    "                                                   dict_exstra =  {'my_field': 'Group DD', 'my_Score': 1})"
+    "                                                   dict_exstra =  {'my_field': 'Group DD', 'my_Score': 2, 'Presented':'group meeting June 24, 2021'})"
    ]
   },
   {
@@ -228,7 +248,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 8,
    "metadata": {
     "slideshow": {
      "slide_type": "-"
@@ -244,11 +264,7 @@
   {
    "cell_type": "code",
    "execution_count": null,
-   "metadata": {
-    "slideshow": {
-     "slide_type": "skip"
-    }
-   },
+   "metadata": {},
    "outputs": [],
    "source": []
   }

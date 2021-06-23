@@ -157,12 +157,14 @@
   <h1>Source code for qdatalib.tolib</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">pprint</span>
 <span class="kn">import</span> <span class="nn">qcodes</span> <span class="k">as</span> <span class="nn">qc</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">collection</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span> 
+<span class="kn">from</span> <span class="nn">qcodes.dataset.sqlite.database</span> <span class="kn">import</span> <span class="n">connect</span>
 <span class="kn">from</span> <span class="nn">qcodes.dataset.database_extract_runs</span> <span class="kn">import</span> <span class="n">extract_runs_into_db</span>
 <span class="kn">from</span> <span class="nn">qcodes.dataset.data_set</span> <span class="kn">import</span> <span class="n">load_by_id</span><span class="p">,</span> <span class="n">load_by_guid</span><span class="p">,</span> <span class="n">DataSet</span>
 <span class="n">pp</span> <span class="o">=</span> <span class="n">pprint</span><span class="o">.</span><span class="n">PrettyPrinter</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
@@ -211,7 +213,9 @@
                                       <span class="n">note</span><span class="p">,</span>
                                       <span class="n">dict_exstra</span><span class="p">)</span>
 
-        <span class="n">extract_runs_into_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_local</span><span class="p">,</span>  <span class="bp">self</span><span class="o">.</span><span class="n">db_shared</span><span class="p">,</span> <span class="n">run_id</span><span class="p">)</span></div>
+        <span class="n">shared_conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_shared</span><span class="p">)</span>
+        <span class="n">extract_runs_into_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_local</span><span class="p">,</span>  <span class="bp">self</span><span class="o">.</span><span class="n">db_shared</span><span class="p">,</span> <span class="n">run_id</span><span class="p">)</span>
+        <span class="n">shared_conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Qdatalib.extract_run_into_nc_and_catalog"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.extract_run_into_nc_and_catalog">[docs]</a>    <span class="k">def</span> <span class="nf">extract_run_into_nc_and_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                                         <span class="n">scientist</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;john doe&#39;</span><span class="p">,</span>
@@ -274,14 +278,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_by_id_local</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
-        <span class="n">file</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">path_to_db</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">original_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_local</span> 
+        <span class="n">file</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/|</span><span class="se">\\\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_shared</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">run_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">captured_run_id</span>
         <span class="n">exp_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">exp_id</span>
         <span class="n">exp_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">exp_name</span>
         <span class="n">run_time</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">run_timestamp</span><span class="p">()</span>
         <span class="n">sample_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sample_name</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="p">[(</span><span class="n">par</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">par</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span> <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">()]</span>
-        <span class="n">post</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">guid</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">file</span><span class="p">,</span>
+        <span class="n">post</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">guid</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">file</span><span class="p">,</span> <span class="n">original_path</span><span class="p">:</span> <span class="s1">&#39;original_path&#39;</span><span class="p">,</span> 
                 <span class="s1">&#39;run_id&#39;</span><span class="p">:</span> <span class="n">run_id</span><span class="p">,</span>
                 <span class="s1">&#39;exp_id&#39;</span><span class="p">:</span> <span class="n">exp_id</span><span class="p">,</span>
                 <span class="s1">&#39;exp_name&#39;</span><span class="p">:</span> <span class="n">exp_name</span><span class="p">,</span>
@@ -305,7 +310,8 @@
         <span class="k">if</span> <span class="n">tjek_number_of_results</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">tjek_number_of_results</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_shared</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;_id&#39;</span><span class="p">])</span></div>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lib_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/**/&quot;</span> <span class="o">+</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;file&#39;</span><span class="p">],</span> <span class="n">recursive</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_shared</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;_id&#39;</span><span class="p">],</span> <span class="n">file_path</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="Qdatalib.get_data_from_nc_by_catalog"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.get_data_from_nc_by_catalog">[docs]</a>    <span class="k">def</span> <span class="nf">get_data_from_nc_by_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_digt</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -343,17 +349,22 @@
             <span class="k">return</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Qdatalib.load_by_id_local"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.load_by_id_local">[docs]</a>    <span class="k">def</span> <span class="nf">load_by_id_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataSet</span><span class="p">:</span>
-        <span class="n">db_location_stored</span> <span class="o">=</span> <span class="n">qc</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">db_location</span>
-        <span class="n">qc</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;core&quot;</span><span class="p">][</span><span class="s2">&quot;db_location&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_local</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">load_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
-        <span class="n">qc</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;core&quot;</span><span class="p">][</span><span class="s2">&quot;db_location&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">db_location_stored</span>
+
+        <span class="n">local_conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_local</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">load_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">local_conn</span><span class="p">)</span>
+        
         <span class="k">return</span> <span class="n">data</span></div>
 
-<div class="viewcode-block" id="Qdatalib.load_shared"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.load_shared">[docs]</a>    <span class="k">def</span> <span class="nf">load_shared</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataSet</span><span class="p">:</span>
-        <span class="n">db_location_stored</span> <span class="o">=</span> <span class="n">qc</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">db_location</span>
-        <span class="n">qc</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;core&quot;</span><span class="p">][</span><span class="s2">&quot;db_location&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_shared</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">load_by_guid</span><span class="p">(</span><span class="n">guid</span><span class="p">)</span>
-        <span class="n">qc</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;core&quot;</span><span class="p">][</span><span class="s2">&quot;db_location&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">db_location_stored</span>
+<div class="viewcode-block" id="Qdatalib.load_shared"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.load_shared">[docs]</a>    <span class="k">def</span> <span class="nf">load_shared</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataSet</span><span class="p">:</span>
+
+        <span class="c1">#try:</span>
+        <span class="n">shared_conn</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span> <span class="c1"># as shared_conn:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">load_by_guid</span><span class="p">(</span><span class="n">guid</span><span class="p">,</span> <span class="n">shared_conn</span><span class="p">)</span>
+            
+        <span class="c1">#finally:</span>
+         <span class="c1">#   shared_conn.close()</span>
+          <span class="c1">#  shared_conn = connect(self.db_shared)</span>
+            <span class="c1">#del shared_conn</span>
         <span class="k">return</span> <span class="n">data</span></div></div>
 </pre></div>
 
