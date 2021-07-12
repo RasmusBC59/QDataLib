@@ -10,6 +10,7 @@ import xarray as xr
 from qcodes.dataset.sqlite.database import connect
 from qcodes.dataset.database_extract_runs import extract_runs_into_db
 from qcodes.dataset.data_set import load_by_id, load_by_guid, DataSet
+from qdatalib.mongo_conf import ConfigMongo
 pp = pprint.PrettyPrinter(indent=4)
 
 
@@ -20,7 +21,7 @@ class Qdatalib:
     """
 
 
-    def __init__(self, mongo_collection: collection = None,
+    def __init__(self,
                  db_local: str = '',
                  db_shared: str = 'shared.db',
                  lib_dir: str = '.') -> None:
@@ -35,10 +36,11 @@ class Qdatalib:
         :param lib_dir: path to directory to shared files, defaults to '.'
         :type lib_dir: str, optional
         """
+        self.config = ConfigMongo()
         self.db_local = db_local
         self.db_shared = db_shared
         self.lib_dir = lib_dir
-        self.mongo_collection: collection = mongo_collection
+        self.mongo_collection: collection = self.config.get_collection()
 
     def extract_run_into_db_and_catalog_by_id(self, run_id: int,
                                               scientist: str = 'john doe',
