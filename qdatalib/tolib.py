@@ -22,9 +22,7 @@ class Qdatalib:
 
 
     def __init__(self,
-                 db_local: str = '',
-                 db_shared: str = 'shared.db',
-                 lib_dir: str = '.') -> None:
+                 confpath=None) -> None:
         """[summary]
 
         :param mongo_collection: The collection where information about the files are stored, defaults to None
@@ -36,10 +34,10 @@ class Qdatalib:
         :param lib_dir: path to directory to shared files, defaults to '.'
         :type lib_dir: str, optional
         """
-        self.config = ConfigMongo()
-        self.db_local = db_local
-        self.db_shared = db_shared
-        self.lib_dir = lib_dir
+        self.config = ConfigMongo(confpath)
+        self.db_local = self.config.get_db_local()
+        self.db_shared = self.config.get_db_shared()
+        self.lib_dir = self.config.get_lib_dir()
         self.mongo_collection: collection = self.config.get_collection()
 
     def extract_run_into_db_and_catalog_by_id(self, run_id: int,

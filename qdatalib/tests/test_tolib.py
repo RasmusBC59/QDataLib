@@ -13,14 +13,23 @@ from qcodes.tests.instrument_mocks import (DummyInstrument,
 from qcodes.utils.dataset.doNd import do1d
 from qcodes.dataset.sqlite.database import connect
 from qdatalib.tolib import Qdatalib 
+from qdatalib.mongo_conf import ConfigMongo
 
 
 @pytest.fixture
-def tmp_collection():
-    client = pymongo.MongoClient("mongodb://localhost:27017/")
-    db = client["testbase"]
-    col = db["testcol"]
-    yield col
+def tmp_config(tmp_path):
+    conf_path = os.path.join(tmp_path, 'config.ini')
+    config = ConfigMongo(confpath=conf_path)
+    client = "mongodb://localhost:27017/"
+    db = "testbase"
+    col = "testcol"
+    config.set_connection(client,db,col)
+    source_db_path = os.path.join(tmp_path, 'source.db')
+    config.set_db_local(source_db_path)
+    config.set_db_shared(os.path.join(tmp_path, 'shared.db'))
+    config.set_lib_dir(tmp_path)
+    yield conf_path
+    client = config.get_client()
     client.drop_database("testbase")
     client.close()
 
@@ -73,10 +82,9 @@ def shared_db_path(tmp_path):
 
 
 @pytest.fixture
-def tmp_qdatalib(tmp_collection, source_db_path, shared_db_path, tmp_path):
+def tmp_qdatalib(tmp_config):
 
-    qdatalib = Qdatalib(tmp_collection, source_db_path, shared_db_path,
-                        tmp_path)
+    qdatalib = Qdatalib(tmp_config)
     return qdatalib
 
 
