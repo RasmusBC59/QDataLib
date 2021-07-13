@@ -167,6 +167,7 @@
 <span class="kn">from</span> <span class="nn">qcodes.dataset.sqlite.database</span> <span class="kn">import</span> <span class="n">connect</span>
 <span class="kn">from</span> <span class="nn">qcodes.dataset.database_extract_runs</span> <span class="kn">import</span> <span class="n">extract_runs_into_db</span>
 <span class="kn">from</span> <span class="nn">qcodes.dataset.data_set</span> <span class="kn">import</span> <span class="n">load_by_id</span><span class="p">,</span> <span class="n">load_by_guid</span><span class="p">,</span> <span class="n">DataSet</span>
+<span class="kn">from</span> <span class="nn">qdatalib.mongo_conf</span> <span class="kn">import</span> <span class="n">ConfigMongo</span>
 <span class="n">pp</span> <span class="o">=</span> <span class="n">pprint</span><span class="o">.</span><span class="n">PrettyPrinter</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
 
@@ -177,10 +178,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mongo_collection</span><span class="p">:</span> <span class="n">collection</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">db_local</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-                 <span class="n">db_shared</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;shared.db&#39;</span><span class="p">,</span>
-                 <span class="n">lib_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">confpath</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;[summary]</span>
 
 <span class="sd">        :param mongo_collection: The collection where information about the files are stored, defaults to None</span>
@@ -192,10 +191,11 @@
 <span class="sd">        :param lib_dir: path to directory to shared files, defaults to &#39;.&#39;</span>
 <span class="sd">        :type lib_dir: str, optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db_local</span> <span class="o">=</span> <span class="n">db_local</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db_shared</span> <span class="o">=</span> <span class="n">db_shared</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lib_dir</span> <span class="o">=</span> <span class="n">lib_dir</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mongo_collection</span><span class="p">:</span> <span class="n">collection</span> <span class="o">=</span> <span class="n">mongo_collection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">ConfigMongo</span><span class="p">(</span><span class="n">confpath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get_db_local</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_shared</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get_db_shared</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lib_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get_lib_dir</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mongo_collection</span><span class="p">:</span> <span class="n">collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get_collection</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Qdatalib.extract_run_into_db_and_catalog_by_id"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.tolib.Qdatalib.extract_run_into_db_and_catalog_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">extract_run_into_db_and_catalog_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                                               <span class="n">scientist</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;john doe&#39;</span><span class="p">,</span>

@@ -20,6 +20,14 @@ qdatalib.tests.test\_config module
    :undoc-members:
    :show-inheritance:
 
+qdatalib.tests.test\_db\_config module
+--------------------------------------
+
+.. automodule:: qdatalib.tests.test_db_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 qdatalib.tests.test\_tolib module
 ---------------------------------
 

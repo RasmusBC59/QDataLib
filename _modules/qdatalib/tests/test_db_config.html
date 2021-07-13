@@ -1,0 +1,256 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>qdatalib.tests.test_db_config &mdash; qdatalib 0.1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> qdatalib
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">qdatalib API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../example_notebooks/index.html">Examples of using qdatalib</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">qdatalib</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>qdatalib.tests.test_db_config</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for qdatalib.tests.test_db_config</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pymongo</span>
+<span class="kn">from</span> <span class="nn">qdatalib.mongo_conf</span> <span class="kn">import</span> <span class="n">ConfigMongo</span>
+
+<div class="viewcode-block" id="test_make_con_file"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_db_config.test_make_con_file">[docs]</a><span class="k">def</span> <span class="nf">test_make_con_file</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigMongo</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">config_path</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="test_write_to_config"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_db_config.test_write_to_config">[docs]</a><span class="k">def</span> <span class="nf">test_write_to_config</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+    <span class="n">conf_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;config.ini&#39;</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigMongo</span><span class="p">(</span><span class="n">confpath</span><span class="o">=</span><span class="n">conf_path</span><span class="p">)</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="s2">&quot;mongodb://localhost:27017/&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="s2">&quot;testbase&quot;</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="s2">&quot;testcol&quot;</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">set_connection</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="n">db</span><span class="p">,</span><span class="n">col</span><span class="p">)</span>
+    <span class="n">source_db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;source.db&#39;</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">set_db_local</span><span class="p">(</span><span class="n">source_db_path</span><span class="p">)</span>
+    <span class="n">shared_db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;shared.db&#39;</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">set_db_shared</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;shared.db&#39;</span><span class="p">))</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">set_lib_dir</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MONGODB&quot;</span><span class="p">,</span><span class="s2">&quot;client&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">client</span>
+    <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MONGODB&quot;</span><span class="p">,</span><span class="s2">&quot;db&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">db</span>
+    <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MONGODB&quot;</span><span class="p">,</span><span class="s2">&quot;collection&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">col</span>
+
+    <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SQLITE&quot;</span><span class="p">,</span><span class="s2">&quot;db_local&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">source_db_path</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SQLITE&quot;</span><span class="p">,</span><span class="s2">&quot;db_shared&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">shared_db_path</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LIBDIR&quot;</span><span class="p">,</span> <span class="s2">&quot;lib_dir&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_read_from_config"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_db_config.test_read_from_config">[docs]</a><span class="k">def</span> <span class="nf">test_read_from_config</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+    <span class="n">conf_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;config.ini&#39;</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigMongo</span><span class="p">(</span><span class="n">confpath</span><span class="o">=</span><span class="n">conf_path</span><span class="p">)</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="s2">&quot;mongodb://localhost:27017/&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="s2">&quot;testbase&quot;</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="s2">&quot;testcol&quot;</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">set_connection</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="n">db</span><span class="p">,</span><span class="n">col</span><span class="p">)</span>
+    <span class="n">source_db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;source.db&#39;</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">set_db_local</span><span class="p">(</span><span class="n">source_db_path</span><span class="p">)</span>
+    <span class="n">shared_db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;shared.db&#39;</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">set_db_shared</span><span class="p">(</span><span class="n">shared_db_path</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">set_lib_dir</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get_client</span><span class="p">())</span> <span class="o">==</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">MongoClient</span>
+    <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">get_client</span><span class="p">()</span> <span class="o">==</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">MongoClient</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get_db</span><span class="p">())</span> <span class="o">==</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">Database</span>
+    <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">get_db</span><span class="p">()</span> <span class="o">==</span> <span class="n">config</span><span class="o">.</span><span class="n">get_client</span><span class="p">()[</span><span class="n">db</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get_collection</span><span class="p">())</span> <span class="o">==</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">Collection</span>
+    <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">get_collection</span><span class="p">()</span> <span class="o">==</span> <span class="n">config</span><span class="o">.</span><span class="n">get_db</span><span class="p">()[</span><span class="n">col</span><span class="p">]</span>
+
+    <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">get_db_local</span><span class="p">()</span> <span class="o">==</span> <span class="n">source_db_path</span>
+    <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">get_db_shared</span><span class="p">()</span> <span class="o">==</span> <span class="n">shared_db_path</span>
+    <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">get_lib_dir</span><span class="p">()</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)</span> </div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

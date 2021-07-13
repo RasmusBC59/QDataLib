@@ -14,6 +14,14 @@ Subpackages
 Submodules
 ----------
 
+qdatalib.mongo\_conf module
+---------------------------
+
+.. automodule:: qdatalib.mongo_conf
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 qdatalib.tolib module
 ---------------------
 

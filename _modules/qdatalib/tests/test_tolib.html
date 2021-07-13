@@ -170,14 +170,23 @@
 <span class="kn">from</span> <span class="nn">qcodes.utils.dataset.doNd</span> <span class="kn">import</span> <span class="n">do1d</span>
 <span class="kn">from</span> <span class="nn">qcodes.dataset.sqlite.database</span> <span class="kn">import</span> <span class="n">connect</span>
 <span class="kn">from</span> <span class="nn">qdatalib.tolib</span> <span class="kn">import</span> <span class="n">Qdatalib</span> 
+<span class="kn">from</span> <span class="nn">qdatalib.mongo_conf</span> <span class="kn">import</span> <span class="n">ConfigMongo</span>
 
 
-<div class="viewcode-block" id="tmp_collection"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.tmp_collection">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">tmp_collection</span><span class="p">():</span>
-    <span class="n">client</span> <span class="o">=</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">MongoClient</span><span class="p">(</span><span class="s2">&quot;mongodb://localhost:27017/&quot;</span><span class="p">)</span>
-    <span class="n">db</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="s2">&quot;testbase&quot;</span><span class="p">]</span>
-    <span class="n">col</span> <span class="o">=</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;testcol&quot;</span><span class="p">]</span>
-    <span class="k">yield</span> <span class="n">col</span>
+<div class="viewcode-block" id="tmp_config"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.tmp_config">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">tmp_config</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+    <span class="n">conf_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;config.ini&#39;</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigMongo</span><span class="p">(</span><span class="n">confpath</span><span class="o">=</span><span class="n">conf_path</span><span class="p">)</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="s2">&quot;mongodb://localhost:27017/&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="s2">&quot;testbase&quot;</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="s2">&quot;testcol&quot;</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">set_connection</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="n">db</span><span class="p">,</span><span class="n">col</span><span class="p">)</span>
+    <span class="n">source_db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;source.db&#39;</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">set_db_local</span><span class="p">(</span><span class="n">source_db_path</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">set_db_shared</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s1">&#39;shared.db&#39;</span><span class="p">))</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">set_lib_dir</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="n">conf_path</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_client</span><span class="p">()</span>
     <span class="n">client</span><span class="o">.</span><span class="n">drop_database</span><span class="p">(</span><span class="s2">&quot;testbase&quot;</span><span class="p">)</span>
     <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
@@ -230,10 +239,9 @@
 
 
 <div class="viewcode-block" id="tmp_qdatalib"><a class="viewcode-back" href="../../../api/generated/qdatalib.tests.html#qdatalib.tests.test_tolib.tmp_qdatalib">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">tmp_qdatalib</span><span class="p">(</span><span class="n">tmp_collection</span><span class="p">,</span> <span class="n">source_db_path</span><span class="p">,</span> <span class="n">shared_db_path</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">tmp_qdatalib</span><span class="p">(</span><span class="n">tmp_config</span><span class="p">):</span>
 
-    <span class="n">qdatalib</span> <span class="o">=</span> <span class="n">Qdatalib</span><span class="p">(</span><span class="n">tmp_collection</span><span class="p">,</span> <span class="n">source_db_path</span><span class="p">,</span> <span class="n">shared_db_path</span><span class="p">,</span>
-                        <span class="n">tmp_path</span><span class="p">)</span>
+    <span class="n">qdatalib</span> <span class="o">=</span> <span class="n">Qdatalib</span><span class="p">(</span><span class="n">tmp_config</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">qdatalib</span></div>
 
 
