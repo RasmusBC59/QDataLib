@@ -75,6 +75,9 @@ target/
 *.hdf5
 *.json
 
+# ini files
+*.ini
+
 # Temporary files
 *.md~
 *.py~
