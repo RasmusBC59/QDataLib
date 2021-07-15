@@ -96,11 +96,12 @@
 <li class="toctree-l2 current"><a class="reference internal" href="index.html#basic-examples">Basic examples</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="export_to_sqlite_netcdf.html">Example on how to Export</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Example on how to import files using QDataLib</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#To-use-QDataLib-we-first-need-a-conextion-to-a-MongoDB-database">To use QDataLib we first need a conextion to a MongoDB database</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Then-we-need-a-and-instace-of-the-class-Qdatalib">Then we need a and instace of the class Qdatalib</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Instantiate-Qdatalib">Instantiate Qdatalib</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Access-your-data-using-Qdatalib">Access your data using Qdatalib</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="qdatalib.html">QDataLib</a></li>
+<li class="toctree-l3"><a class="reference internal" href="setting_up_qdatalib.html">Setting up QDataLib</a></li>
 </ul>
 </li>
 </ul>
@@ -451,32 +452,33 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pymongo</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">qdatalib.tolib</span> <span class="kn">import</span> <span class="n">Qdatalib</span>
-<span class="kn">from</span> <span class="nn">qcodes.tests.instrument_mocks</span> <span class="kn">import</span> <span class="n">DummyInstrument</span><span class="p">,</span> <span class="n">DummyInstrumentWithMeasurement</span>
-<span class="kn">from</span> <span class="nn">qcodes</span> <span class="kn">import</span> <span class="n">load_or_create_experiment</span><span class="p">,</span> <span class="n">initialise_or_create_database_at</span>
-<span class="kn">from</span> <span class="nn">qcodes.utils.dataset.doNd</span> <span class="kn">import</span> <span class="n">do1d</span><span class="p">,</span> <span class="n">do2d</span>
+<span></span><span class="kn">from</span> <span class="nn">qdatalib.tolib</span> <span class="kn">import</span> <span class="n">Qdatalib</span>
 <span class="kn">from</span> <span class="nn">qcodes.dataset.plotting</span> <span class="kn">import</span> <span class="n">plot_dataset</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
+<div class="section" id="Instantiate-Qdatalib">
+<h2>Instantiate Qdatalib<a class="headerlink" href="#Instantiate-Qdatalib" title="Permalink to this headline">¶</a></h2>
+<p>To use Qdatalib you need an instance. If you have not setup Qdatalib yet see the example: setting_up_qdatalib</p>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Can be ignored, Setting up temporary files and folder to be used in the example</span>
-<span class="n">TEMP_PATH</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">()</span>
-<span class="n">my_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TEMP_PATH</span><span class="p">,</span><span class="s1">&#39;qdatalib&#39;</span><span class="p">)</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">my_path</span><span class="p">)</span>
-<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-
-
+<span></span><span class="n">qdatalib</span> <span class="o">=</span> <span class="n">Qdatalib</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Access-your-data-using-Qdatalib">
+<h2>Access your data using Qdatalib<a class="headerlink" href="#Access-your-data-using-Qdatalib" title="Permalink to this headline">¶</a></h2>
+<p>You can get data from Qdatalib using the funcion get_data_by_catalog.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">data</span> <span class="o">=</span> <span class="n">qdatalib</span><span class="o">.</span><span class="n">get_data_by_catalog</span><span class="p">({</span><span class="s1">&#39;run_id&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
 </pre></div>
 </div>
 </div>
@@ -485,55 +487,46 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[WinError 183] Cannot create a file when that file already exists: &#39;C:\\Users\\rbcma\\AppData\\Local\\Temp\\qdatalib&#39;
+The query returend 2 results
+[   {   &#39;C:\\Users\\rbcma\\AppData\\Local\\Temp\\qdatalib_local&#39;: {   &#39;db&#39;: &#39;original_path&#39;},
+        &#39;Presented&#39;: &#39;group meeting June 24, 2021&#39;,
+        &#39;_id&#39;: &#39;aaaaaaaa-0000-0000-0000-017aa9641e21&#39;,
+        &#39;exp_id&#39;: 1,
+        &#39;exp_name&#39;: &#39;qdatalib&#39;,
+        &#39;file&#39;: &#39;shared_tutorial.db&#39;,
+        &#39;my_Score&#39;: 2,
+        &#39;my_field&#39;: &#39;Group NB&#39;,
+        &#39;note&#39;: [&#39;This happened&#39;],
+        &#39;parameters&#39;: [[&#39;dac_ch1&#39;, &#39;V&#39;], [&#39;dmm_v1&#39;, &#39;V&#39;], [&#39;dmm_v2&#39;, &#39;V&#39;]],
+        &#39;run_id&#39;: 1,
+        &#39;run_time&#39;: &#39;2021-07-15 10:59:08&#39;,
+        &#39;sample_name&#39;: &#39;no sample&#39;,
+        &#39;scientist&#39;: &#39;John doe&#39;,
+        &#39;tag&#39;: [&#39;double dot&#39;]},
+    {   &#39;C:\\Users\\rbcma\\AppData\\Local\\Temp\\qdatalib_localB&#39;: {   &#39;db&#39;: &#39;original_path&#39;},
+        &#39;Presented&#39;: &#39;group meeting July 24, 2021&#39;,
+        &#39;_id&#39;: &#39;aaaaaaaa-0000-0000-0000-017aa96473d6&#39;,
+        &#39;exp_id&#39;: 1,
+        &#39;exp_name&#39;: &#39;qdatalibB&#39;,
+        &#39;file&#39;: &#39;shared_tutorial.db&#39;,
+        &#39;my_Score&#39;: 10,
+        &#39;my_field&#39;: &#39;Group C&#39;,
+        &#39;note&#39;: [&#39;This happened again&#39;],
+        &#39;parameters&#39;: [[&#39;dac_ch1&#39;, &#39;V&#39;], [&#39;dmm_v1&#39;, &#39;V&#39;], [&#39;dmm_v2&#39;, &#39;V&#39;]],
+        &#39;run_id&#39;: 1,
+        &#39;run_time&#39;: &#39;2021-07-15 10:59:30&#39;,
+        &#39;sample_name&#39;: &#39;no sampleB&#39;,
+        &#39;scientist&#39;: &#39;Jane doe&#39;,
+        &#39;tag&#39;: [&#39;sigle dot&#39;]}]
 </pre></div></div>
 </div>
-<div class="section" id="To-use-QDataLib-we-first-need-a-conextion-to-a-MongoDB-database">
-<h2>To use QDataLib we first need a conextion to a MongoDB database<a class="headerlink" href="#To-use-QDataLib-we-first-need-a-conextion-to-a-MongoDB-database" title="Permalink to this headline">¶</a></h2>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">client</span> <span class="o">=</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">MongoClient</span><span class="p">(</span><span class="s2">&quot;mongodb+srv://rbch:test4RBCH@test.2smqf.mongodb.net/testdb?retryWrites=true&amp;w=majority&quot;</span><span class="p">)</span>
-<span class="n">db</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="s1">&#39;testdb&#39;</span><span class="p">]</span>
-<span class="n">collection</span> <span class="o">=</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;testcol&quot;</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Then-we-need-a-and-instace-of-the-class-Qdatalib">
-<h2>Then we need a and instace of the class Qdatalib<a class="headerlink" href="#Then-we-need-a-and-instace-of-the-class-Qdatalib" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="Passing">
-<h3>Passing<a class="headerlink" href="#Passing" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><p>collection: The collection used to keep track of your data files</p></li>
-<li><p>db_local: The SQLite database to export from</p></li>
-<li><p>db_shared: The SQLite database to export to</p></li>
-<li><p>shared_dir: The Directory where other dataformats should be stored</p></li>
-</ul>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">shared_dir</span> <span class="o">=</span> <span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">Users</span><span class="se">\\</span><span class="s2">rbcma</span><span class="se">\\</span><span class="s2">Spin Qubit Dropbox</span><span class="se">\\</span><span class="s2">qdatalib QDev</span><span class="se">\\</span><span class="s2">Test&quot;</span>
-<span class="n">shared_path_db</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">shared_dir</span><span class="p">,</span><span class="s1">&#39;shared.db&#39;</span><span class="p">)</span>
-<span class="n">local_path_db</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">my_path</span><span class="p">,</span> <span class="s1">&#39;qdatalib_tutorial.db&#39;</span><span class="p">)</span>
-
-<span class="n">qdatalib</span> <span class="o">=</span> <span class="n">Qdatalib</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span>
-                    <span class="n">local_path_db</span><span class="p">,</span>
-                    <span class="n">shared_path_db</span><span class="p">,</span>
-                    <span class="n">shared_dir</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
+<p>If more than one data set matches your query criteria, only the mongo collection data are returned. You can use the returned information to make a query that gives you the data you want.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">data</span> <span class="o">=</span> <span class="n">qdatalib</span><span class="o">.</span><span class="n">get_data_by_catalog</span><span class="p">({</span><span class="s1">&#39;run_id&#39;</span><span class="p">:</span><span class="mi">13</span><span class="p">})</span>
+<span></span><span class="n">data</span> <span class="o">=</span> <span class="n">qdatalib</span><span class="o">.</span><span class="n">get_data_by_catalog</span><span class="p">({</span><span class="s1">&#39;run_id&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;tag&#39;</span><span class="p">:</span><span class="s1">&#39;double dot&#39;</span><span class="p">})</span>
 </pre></div>
 </div>
 </div>
@@ -552,8 +545,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-([&lt;AxesSubplot:title={&#39;center&#39;:&#39;Run #13, Experiment qdatalib (no sample)&#39;}, xlabel=&#39;Gate ch1 (V)&#39;, ylabel=&#39;Gate v1 (V)&#39;&gt;,
-  &lt;AxesSubplot:title={&#39;center&#39;:&#39;Run #13, Experiment qdatalib (no sample)&#39;}, xlabel=&#39;Gate ch1 (V)&#39;, ylabel=&#39;Gate v2 (mV)&#39;&gt;],
+([&lt;AxesSubplot:title={&#39;center&#39;:&#39;Run #1, Experiment qdatalib (no sample)&#39;}, xlabel=&#39;Gate ch1 (V)&#39;, ylabel=&#39;Gate v1 (V)&#39;&gt;,
+  &lt;AxesSubplot:title={&#39;center&#39;:&#39;Run #1, Experiment qdatalib (no sample)&#39;}, xlabel=&#39;Gate ch1 (V)&#39;, ylabel=&#39;Gate v2 (mV)&#39;&gt;],
  [None, None])
 </pre></div></div>
 </div>
@@ -571,12 +564,13 @@ div.rendered_html tbody tr:hover {
 <img alt="../_images/example_notebooks_import_from_QDataLib_8_2.png" src="../_images/example_notebooks_import_from_QDataLib_8_2.png" />
 </div>
 </div>
+<p>Getting data from a netcdf is returned as a xarray</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">data_xarray</span> <span class="o">=</span> <span class="n">qdatalib</span><span class="o">.</span><span class="n">get_data_from_nc_by_catalog</span><span class="p">({</span><span class="s1">&#39;run_id&#39;</span><span class="p">:</span><span class="mi">13</span><span class="p">,</span><span class="s1">&#39;my_field&#39;</span><span class="p">:</span> <span class="s1">&#39;Group K&#39;</span><span class="p">})</span>
+<span></span><span class="n">data_xarray</span> <span class="o">=</span> <span class="n">qdatalib</span><span class="o">.</span><span class="n">get_data_from_nc_by_catalog</span><span class="p">({</span><span class="s1">&#39;run_id&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;my_field&#39;</span><span class="p">:</span> <span class="s1">&#39;Group NB&#39;</span><span class="p">})</span>
 </pre></div>
 </div>
 </div>
@@ -950,26 +944,26 @@ Dimensions:  (dac_ch1: 10)
 Coordinates:
   * dac_ch1  (dac_ch1) float64 0.0 1.111 2.222 3.333 ... 6.667 7.778 8.889 10.0
 Data variables:
-    dmm_v1   (dac_ch1) float64 5.02 4.006 3.268 2.597 ... 0.9546 0.8169 0.6611
-    dmm_v2   (dac_ch1) float64 0.7593 0.0005791 ... -0.001007 -0.0003853
+    dmm_v1   (dac_ch1) float64 4.856 3.978 3.168 2.504 ... 0.9716 0.7113 0.7752
+    dmm_v2   (dac_ch1) float64 0.7592 -5.235e-05 ... 0.0006781 -0.000473
 Attributes: (12/13)
     ds_name:                  results
     sample_name:              no sample
     exp_name:                 qdatalib
     snapshot:                 null
-    guid:                     aaaaaaaa-0000-0000-0000-017a39b2e6ce
-    run_timestamp:            2021-06-23 18:27:43
+    guid:                     aaaaaaaa-0000-0000-0000-017aa9641e21
+    run_timestamp:            2021-07-15 10:59:08
     ...                       ...
-    captured_run_id:          13
-    captured_counter:         13
-    run_id:                   13
+    captured_run_id:          1
+    captured_counter:         1
+    run_id:                   1
     run_description:          {&quot;version&quot;: 3, &quot;interdependencies&quot;: {&quot;paramspec...
-    run_timestamp_raw:        1624465663.7165916
-    completed_timestamp_raw:  1624465663.8986847</pre><div class='xr-wrap' hidden><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-8ed26d0d-2968-4e4f-9c31-bb3460a090e3' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-8ed26d0d-2968-4e4f-9c31-bb3460a090e3' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>dac_ch1</span>: 10</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-ee913098-5036-4359-b43a-c23c098ea0ec' class='xr-section-summary-in' type='checkbox'  checked><label for='section-ee913098-5036-4359-b43a-c23c098ea0ec' class='xr-section-summary' >Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>dac_ch1</span></div><div class='xr-var-dims'>(dac_ch1)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>0.0 1.111 2.222 ... 8.889 10.0</div><input id='attrs-76416686-26f8-4330-9211-92e375bf96f1' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-76416686-26f8-4330-9211-92e375bf96f1' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-03340d25-4080-4469-8648-80394ec2e41e' class='xr-var-data-in' type='checkbox'><label for='data-03340d25-4080-4469-8648-80394ec2e41e' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>name :</span></dt><dd>dac_ch1</dd><dt><span>paramtype :</span></dt><dd>numeric</dd><dt><span>label :</span></dt><dd>Gate ch1</dd><dt><span>unit :</span></dt><dd>V</dd><dt><span>inferred_from :</span></dt><dd>[]</dd><dt><span>depends_on :</span></dt><dd>[]</dd></dl></div><div class='xr-var-data'><pre>array([ 0.      ,  1.111111,  2.222222,  3.333333,  4.444444,  5.555556,
-        6.666667,  7.777778,  8.888889, 10.      ])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-f5293bc1-2fc3-4cf7-a8a5-ace716d071e0' class='xr-section-summary-in' type='checkbox'  checked><label for='section-f5293bc1-2fc3-4cf7-a8a5-ace716d071e0' class='xr-section-summary' >Data variables: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>dmm_v1</span></div><div class='xr-var-dims'>(dac_ch1)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>...</div><input id='attrs-910abf48-ab96-41ca-8914-6dc5923dcda3' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-910abf48-ab96-41ca-8914-6dc5923dcda3' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-ff26d499-08ff-46cb-bf38-0fbc5483b192' class='xr-var-data-in' type='checkbox'><label for='data-ff26d499-08ff-46cb-bf38-0fbc5483b192' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>name :</span></dt><dd>dmm_v1</dd><dt><span>paramtype :</span></dt><dd>numeric</dd><dt><span>label :</span></dt><dd>Gate v1</dd><dt><span>unit :</span></dt><dd>V</dd><dt><span>inferred_from :</span></dt><dd>[]</dd><dt><span>depends_on :</span></dt><dd>dac_ch1</dd></dl></div><div class='xr-var-data'><pre>array([5.020217, 4.005598, 3.268142, 2.596806, 1.978668, 1.656808, 1.331184,
-       0.954555, 0.816883, 0.661098])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>dmm_v2</span></div><div class='xr-var-dims'>(dac_ch1)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>...</div><input id='attrs-79c907b9-eaf0-46d3-8766-8dbd8d8bb7de' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-79c907b9-eaf0-46d3-8766-8dbd8d8bb7de' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-34041263-2c05-4a86-85bf-49caf60ab306' class='xr-var-data-in' type='checkbox'><label for='data-34041263-2c05-4a86-85bf-49caf60ab306' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>name :</span></dt><dd>dmm_v2</dd><dt><span>paramtype :</span></dt><dd>numeric</dd><dt><span>label :</span></dt><dd>Gate v2</dd><dt><span>unit :</span></dt><dd>V</dd><dt><span>inferred_from :</span></dt><dd>[]</dd><dt><span>depends_on :</span></dt><dd>dac_ch1</dd></dl></div><div class='xr-var-data'><pre>array([ 7.593048e-01,  5.790858e-04,  5.236169e-04, -5.106502e-04,
-       -4.575521e-05, -1.306375e-04, -6.709072e-04,  1.366515e-04,
-       -1.007102e-03, -3.853156e-04])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-c0f8fb26-d776-49d6-94f2-cb1082b20b71' class='xr-section-summary-in' type='checkbox'  ><label for='section-c0f8fb26-d776-49d6-94f2-cb1082b20b71' class='xr-section-summary' >Attributes: <span>(13)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>ds_name :</span></dt><dd>results</dd><dt><span>sample_name :</span></dt><dd>no sample</dd><dt><span>exp_name :</span></dt><dd>qdatalib</dd><dt><span>snapshot :</span></dt><dd>null</dd><dt><span>guid :</span></dt><dd>aaaaaaaa-0000-0000-0000-017a39b2e6ce</dd><dt><span>run_timestamp :</span></dt><dd>2021-06-23 18:27:43</dd><dt><span>completed_timestamp :</span></dt><dd>2021-06-23 18:27:43</dd><dt><span>captured_run_id :</span></dt><dd>13</dd><dt><span>captured_counter :</span></dt><dd>13</dd><dt><span>run_id :</span></dt><dd>13</dd><dt><span>run_description :</span></dt><dd>{&quot;version&quot;: 3, &quot;interdependencies&quot;: {&quot;paramspecs&quot;: [{&quot;name&quot;: &quot;dac_ch1&quot;, &quot;paramtype&quot;: &quot;numeric&quot;, &quot;label&quot;: &quot;Gate ch1&quot;, &quot;unit&quot;: &quot;V&quot;, &quot;inferred_from&quot;: [], &quot;depends_on&quot;: []}, {&quot;name&quot;: &quot;dmm_v1&quot;, &quot;paramtype&quot;: &quot;numeric&quot;, &quot;label&quot;: &quot;Gate v1&quot;, &quot;unit&quot;: &quot;V&quot;, &quot;inferred_from&quot;: [], &quot;depends_on&quot;: [&quot;dac_ch1&quot;]}, {&quot;name&quot;: &quot;dmm_v2&quot;, &quot;paramtype&quot;: &quot;numeric&quot;, &quot;label&quot;: &quot;Gate v2&quot;, &quot;unit&quot;: &quot;V&quot;, &quot;inferred_from&quot;: [], &quot;depends_on&quot;: [&quot;dac_ch1&quot;]}]}, &quot;interdependencies_&quot;: {&quot;parameters&quot;: {&quot;dmm_v1&quot;: {&quot;name&quot;: &quot;dmm_v1&quot;, &quot;paramtype&quot;: &quot;numeric&quot;, &quot;label&quot;: &quot;Gate v1&quot;, &quot;unit&quot;: &quot;V&quot;}, &quot;dac_ch1&quot;: {&quot;name&quot;: &quot;dac_ch1&quot;, &quot;paramtype&quot;: &quot;numeric&quot;, &quot;label&quot;: &quot;Gate ch1&quot;, &quot;unit&quot;: &quot;V&quot;}, &quot;dmm_v2&quot;: {&quot;name&quot;: &quot;dmm_v2&quot;, &quot;paramtype&quot;: &quot;numeric&quot;, &quot;label&quot;: &quot;Gate v2&quot;, &quot;unit&quot;: &quot;V&quot;}}, &quot;dependencies&quot;: {&quot;dmm_v1&quot;: [&quot;dac_ch1&quot;], &quot;dmm_v2&quot;: [&quot;dac_ch1&quot;]}, &quot;inferences&quot;: {}, &quot;standalones&quot;: []}, &quot;shapes&quot;: {&quot;dmm_v1&quot;: [10], &quot;dmm_v2&quot;: [10]}}</dd><dt><span>run_timestamp_raw :</span></dt><dd>1624465663.7165916</dd><dt><span>completed_timestamp_raw :</span></dt><dd>1624465663.8986847</dd></dl></div></li></ul></div></div></div>
+    run_timestamp_raw:        1626339548.7205129
+    completed_timestamp_raw:  1626339548.8823342</pre><div class='xr-wrap' hidden><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-97fb93f3-69f4-4c7f-8112-3cc62da44e01' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-97fb93f3-69f4-4c7f-8112-3cc62da44e01' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>dac_ch1</span>: 10</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-fa1cdb0f-d75b-43ac-a7e5-cfa7341c40bb' class='xr-section-summary-in' type='checkbox'  checked><label for='section-fa1cdb0f-d75b-43ac-a7e5-cfa7341c40bb' class='xr-section-summary' >Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>dac_ch1</span></div><div class='xr-var-dims'>(dac_ch1)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>0.0 1.111 2.222 ... 8.889 10.0</div><input id='attrs-d38dc42c-f6b6-4a30-bf51-274ee6094d98' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-d38dc42c-f6b6-4a30-bf51-274ee6094d98' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-16f8e3fa-18dd-448c-8d0e-64751e66b86e' class='xr-var-data-in' type='checkbox'><label for='data-16f8e3fa-18dd-448c-8d0e-64751e66b86e' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>name :</span></dt><dd>dac_ch1</dd><dt><span>paramtype :</span></dt><dd>numeric</dd><dt><span>label :</span></dt><dd>Gate ch1</dd><dt><span>unit :</span></dt><dd>V</dd><dt><span>inferred_from :</span></dt><dd>[]</dd><dt><span>depends_on :</span></dt><dd>[]</dd></dl></div><div class='xr-var-data'><pre>array([ 0.      ,  1.111111,  2.222222,  3.333333,  4.444444,  5.555556,
+        6.666667,  7.777778,  8.888889, 10.      ])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-fcf14b92-28dc-49f3-a2f3-736b819b4943' class='xr-section-summary-in' type='checkbox'  checked><label for='section-fcf14b92-28dc-49f3-a2f3-736b819b4943' class='xr-section-summary' >Data variables: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>dmm_v1</span></div><div class='xr-var-dims'>(dac_ch1)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>...</div><input id='attrs-67e69c57-8462-4074-888d-877ed7d4f940' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-67e69c57-8462-4074-888d-877ed7d4f940' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-33e0707b-775e-4635-a9fd-32b33c497741' class='xr-var-data-in' type='checkbox'><label for='data-33e0707b-775e-4635-a9fd-32b33c497741' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>name :</span></dt><dd>dmm_v1</dd><dt><span>paramtype :</span></dt><dd>numeric</dd><dt><span>label :</span></dt><dd>Gate v1</dd><dt><span>unit :</span></dt><dd>V</dd><dt><span>inferred_from :</span></dt><dd>[]</dd><dt><span>depends_on :</span></dt><dd>dac_ch1</dd></dl></div><div class='xr-var-data'><pre>array([4.855916, 3.978291, 3.167727, 2.503683, 1.954306, 1.473822, 1.332216,
+       0.971628, 0.711277, 0.775152])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>dmm_v2</span></div><div class='xr-var-dims'>(dac_ch1)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>...</div><input id='attrs-65fe189e-d556-475c-9ba9-847aadcdd3bb' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-65fe189e-d556-475c-9ba9-847aadcdd3bb' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-0c1c4604-82a4-4827-a403-a62ef44c3a65' class='xr-var-data-in' type='checkbox'><label for='data-0c1c4604-82a4-4827-a403-a62ef44c3a65' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>name :</span></dt><dd>dmm_v2</dd><dt><span>paramtype :</span></dt><dd>numeric</dd><dt><span>label :</span></dt><dd>Gate v2</dd><dt><span>unit :</span></dt><dd>V</dd><dt><span>inferred_from :</span></dt><dd>[]</dd><dt><span>depends_on :</span></dt><dd>dac_ch1</dd></dl></div><div class='xr-var-data'><pre>array([ 7.592161e-01, -5.235340e-05, -7.234900e-06,  8.302668e-04,
+       -1.245735e-03, -4.155454e-04, -7.960841e-04, -3.306797e-04,
+        6.781011e-04, -4.729548e-04])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-2f417168-dda6-414f-b440-59a22e374701' class='xr-section-summary-in' type='checkbox'  ><label for='section-2f417168-dda6-414f-b440-59a22e374701' class='xr-section-summary' >Attributes: <span>(13)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>ds_name :</span></dt><dd>results</dd><dt><span>sample_name :</span></dt><dd>no sample</dd><dt><span>exp_name :</span></dt><dd>qdatalib</dd><dt><span>snapshot :</span></dt><dd>null</dd><dt><span>guid :</span></dt><dd>aaaaaaaa-0000-0000-0000-017aa9641e21</dd><dt><span>run_timestamp :</span></dt><dd>2021-07-15 10:59:08</dd><dt><span>completed_timestamp :</span></dt><dd>2021-07-15 10:59:08</dd><dt><span>captured_run_id :</span></dt><dd>1</dd><dt><span>captured_counter :</span></dt><dd>1</dd><dt><span>run_id :</span></dt><dd>1</dd><dt><span>run_description :</span></dt><dd>{&quot;version&quot;: 3, &quot;interdependencies&quot;: {&quot;paramspecs&quot;: [{&quot;name&quot;: &quot;dac_ch1&quot;, &quot;paramtype&quot;: &quot;numeric&quot;, &quot;label&quot;: &quot;Gate ch1&quot;, &quot;unit&quot;: &quot;V&quot;, &quot;inferred_from&quot;: [], &quot;depends_on&quot;: []}, {&quot;name&quot;: &quot;dmm_v1&quot;, &quot;paramtype&quot;: &quot;numeric&quot;, &quot;label&quot;: &quot;Gate v1&quot;, &quot;unit&quot;: &quot;V&quot;, &quot;inferred_from&quot;: [], &quot;depends_on&quot;: [&quot;dac_ch1&quot;]}, {&quot;name&quot;: &quot;dmm_v2&quot;, &quot;paramtype&quot;: &quot;numeric&quot;, &quot;label&quot;: &quot;Gate v2&quot;, &quot;unit&quot;: &quot;V&quot;, &quot;inferred_from&quot;: [], &quot;depends_on&quot;: [&quot;dac_ch1&quot;]}]}, &quot;interdependencies_&quot;: {&quot;parameters&quot;: {&quot;dmm_v1&quot;: {&quot;name&quot;: &quot;dmm_v1&quot;, &quot;paramtype&quot;: &quot;numeric&quot;, &quot;label&quot;: &quot;Gate v1&quot;, &quot;unit&quot;: &quot;V&quot;}, &quot;dac_ch1&quot;: {&quot;name&quot;: &quot;dac_ch1&quot;, &quot;paramtype&quot;: &quot;numeric&quot;, &quot;label&quot;: &quot;Gate ch1&quot;, &quot;unit&quot;: &quot;V&quot;}, &quot;dmm_v2&quot;: {&quot;name&quot;: &quot;dmm_v2&quot;, &quot;paramtype&quot;: &quot;numeric&quot;, &quot;label&quot;: &quot;Gate v2&quot;, &quot;unit&quot;: &quot;V&quot;}}, &quot;dependencies&quot;: {&quot;dmm_v1&quot;: [&quot;dac_ch1&quot;], &quot;dmm_v2&quot;: [&quot;dac_ch1&quot;]}, &quot;inferences&quot;: {}, &quot;standalones&quot;: []}, &quot;shapes&quot;: {&quot;dmm_v1&quot;: [10], &quot;dmm_v2&quot;: [10]}}</dd><dt><span>run_timestamp_raw :</span></dt><dd>1626339548.7205129</dd><dt><span>completed_timestamp_raw :</span></dt><dd>1626339548.8823342</dd></dl></div></li></ul></div></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
@@ -986,61 +980,152 @@ Attributes: (12/13)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[&lt;matplotlib.lines.Line2D at 0x2525c005fc8&gt;]
+[&lt;matplotlib.lines.Line2D at 0x19f595b5708&gt;]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/example_notebooks_import_from_QDataLib_11_1.png" src="../_images/example_notebooks_import_from_QDataLib_11_1.png" />
+<img alt="../_images/example_notebooks_import_from_QDataLib_12_1.png" src="../_images/example_notebooks_import_from_QDataLib_12_1.png" />
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<p>Getting data from a csv file is returned as a pandas dataframe</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">data</span> <span class="o">=</span> <span class="n">qdatalib</span><span class="o">.</span><span class="n">get_data_by_catalog</span><span class="p">({</span><span class="s1">&#39;run_id&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
+<span></span><span class="n">data_df</span> <span class="o">=</span> <span class="n">qdatalib</span><span class="o">.</span><span class="n">get_data_from_csv_by_catalog</span><span class="p">({</span><span class="s1">&#39;run_id&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;tag&#39;</span><span class="p">:</span><span class="s1">&#39;sigle dot&#39;</span><span class="p">})</span>
 </pre></div>
 </div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">data_df</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>dac_ch1</th>
+      <th>dmm_v1</th>
+      <th>dmm_v2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.000000</td>
+      <td>5.040760</td>
+      <td>0.759494</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.111111</td>
+      <td>4.033489</td>
+      <td>0.000178</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2.222222</td>
+      <td>3.158298</td>
+      <td>-0.000819</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3.333333</td>
+      <td>2.493970</td>
+      <td>-0.000011</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4.444444</td>
+      <td>2.117269</td>
+      <td>-0.000218</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>5.555556</td>
+      <td>1.697006</td>
+      <td>-0.000441</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>6.666667</td>
+      <td>1.440228</td>
+      <td>-0.000125</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>7.777778</td>
+      <td>0.811189</td>
+      <td>-0.000124</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>8.888889</td>
+      <td>0.909516</td>
+      <td>-0.000595</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>10.000000</td>
+      <td>0.698422</td>
+      <td>0.000352</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">data_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;dac_ch1&#39;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;dmm_v2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;AxesSubplot:xlabel=&#39;dac_ch1&#39;&gt;
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="highlight"><pre>
-The query returend 2 results
-[   {   &#39;_id&#39;: &#39;aaaaaaaa-0000-0000-0000-017a28c8229d&#39;,
-        &#39;exp_id&#39;: 1,
-        &#39;exp_name&#39;: &#39;qdatalib&#39;,
-        &#39;file&#39;: &#39;/var/folders/vy/b0gpjfqs48x2fjwpxg9l36140000gn/T/qdatalib/qdatalib_tutorial.db&#39;,
-        &#39;my_Score&#39;: 10000,
-        &#39;my_field&#39;: &#39;Group A&#39;,
-        &#39;note&#39;: [&#39;This happened&#39;],
-        &#39;parameters&#39;: [[&#39;dac_ch1&#39;, &#39;V&#39;], [&#39;dmm_v1&#39;, &#39;V&#39;], [&#39;dmm_v2&#39;, &#39;V&#39;]],
-        &#39;run_id&#39;: 1,
-        &#39;run_time&#39;: &#39;2021-06-20 11:37:22&#39;,
-        &#39;sample_name&#39;: &#39;no sample&#39;,
-        &#39;scientist&#39;: &#39;John doe&#39;,
-        &#39;tag&#39;: [&#39;double dot&#39;]},
-    {   &#39;_id&#39;: &#39;aaaaaaaa-0000-0000-0000-017a28c8386f&#39;,
-        &#39;exp_id&#39;: 1,
-        &#39;exp_name&#39;: &#39;qdatalibtwo&#39;,
-        &#39;file&#39;: &#39;/var/folders/vy/b0gpjfqs48x2fjwpxg9l36140000gn/T/qdatalib/qdatalib_tutorial2.db&#39;,
-        &#39;my_Score&#39;: 5700,
-        &#39;my_field&#39;: &#39;Group C&#39;,
-        &#39;note&#39;: [&#39;and then this happened&#39;],
-        &#39;parameters&#39;: [   [&#39;dac_ch1&#39;, &#39;V&#39;],
-                          [&#39;dac_ch2&#39;, &#39;V&#39;],
-                          [&#39;dmm_v1&#39;, &#39;V&#39;],
-                          [&#39;dmm_v2&#39;, &#39;V&#39;]],
-        &#39;run_id&#39;: 1,
-        &#39;run_time&#39;: &#39;2021-06-20 11:37:28&#39;,
-        &#39;sample_name&#39;: &#39;no sample&#39;,
-        &#39;scientist&#39;: &#39;Jane doe&#39;,
-        &#39;tag&#39;: [&#39;triple dot&#39;]}]
-</pre></div></div>
+<img alt="../_images/example_notebooks_import_from_QDataLib_16_1.png" src="../_images/example_notebooks_import_from_QDataLib_16_1.png" />
+</div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -1049,7 +1134,6 @@ The query returend 2 results
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span>
 </pre></div>
-</div>
 </div>
 </div>
 </div>

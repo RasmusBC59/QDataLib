@@ -247,7 +247,12 @@
             
 <div class="viewcode-block" id="ConfigMongo.write_file"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.mongo_conf.ConfigMongo.write_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">configfile</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">configfile</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConfigMongo.print_config_file"><a class="viewcode-back" href="../../api/generated/qdatalib.html#qdatalib.mongo_conf.ConfigMongo.print_config_file">[docs]</a>    <span class="k">def</span> <span class="nf">print_config_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">file_contents</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">file_contents</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
