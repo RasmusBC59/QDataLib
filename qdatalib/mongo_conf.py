@@ -91,3 +91,8 @@ class ConfigMongo():
     def write_file(self):
         with open(self.config_path, 'w') as configfile:
             self.config.write(configfile)
+
+    def print_config_file(self):
+        with open(self.config_path) as f:
+            file_contents = f.read()
+            print(file_contents)
