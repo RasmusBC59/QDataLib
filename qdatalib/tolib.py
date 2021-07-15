@@ -10,6 +10,7 @@ import xarray as xr
 from qcodes.dataset.sqlite.database import connect
 from qcodes.dataset.database_extract_runs import extract_runs_into_db
 from qcodes.dataset.data_set import load_by_id, load_by_guid, DataSet
+from typing import Optional
 from qdatalib.mongo_conf import ConfigMongo
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -22,7 +23,14 @@ class Qdatalib:
 
 
     def __init__(self,
-                 confpath=None) -> None:
+                confpath: Optional[str] = None, 
+                mongo_client: Optional[str] = None,
+                mongo_db: Optional[str] = None,
+                mongo_collection: Optional[str] = None,
+                db_local: Optional[str] = None,
+                db_shared: Optional[str] = None,
+                lib_dir: Optional[str] = None
+                ) -> None:
         """[summary]
 
         :param mongo_collection: The collection where information about the files are stored, defaults to None
@@ -35,10 +43,17 @@ class Qdatalib:
         :type lib_dir: str, optional
         """
         self.config = ConfigMongo(confpath)
-        self.db_local = self.config.get_db_local()
-        self.db_shared = self.config.get_db_shared()
-        self.lib_dir = self.config.get_lib_dir()
-        self.mongo_collection: collection = self.config.get_collection()
+
+        try:
+            self.set_mongo_client(mongo_client)
+            self.set_mongo_db(mongo_db)
+            self.set_mongo_collection(mongo_collection)
+            self.set_db_local(db_local)
+            self.set_db_shared(db_shared)
+            self.set_lib_dir(lib_dir)
+            self.set_mongo_collection(mongo_collection)
+        except:
+            print('Please setup QDataLib config file')
 
     def extract_run_into_db_and_catalog_by_id(self, run_id: int,
                                               scientist: str = 'john doe',
@@ -209,3 +224,28 @@ class Qdatalib:
           #  shared_conn = connect(self.db_shared)
             #del shared_conn
         return data
+
+    def set_mongo_client(self,client):
+        if client: self.config.set_client(client)
+        self.client = self.config.get_client()
+
+    def set_mongo_db(self,db):
+        if db: self.config.set_db(db)
+        self.db = self.config.get_db()
+
+    def set_mongo_collection(self,collection):
+        if collection: self.config.set_collection(collection)
+        self.mongo_collection = self.config.get_collection()
+
+    def set_db_local(self, db_local):
+        if db_local:  self.config.set_db_local(db_local)
+        self.db_local = self.config.get_db_local()
+
+    def set_db_shared(self, db_shared):
+        if db_shared: self.config.set_db_shared(db_shared)
+        self.db_shared = self.config.get_db_shared()
+    
+    def set_lib_dir(self, lib_dir):
+        if lib_dir: self.config.set_lib_dir(lib_dir)
+        self.lib_dir = self.config.get_lib_dir()
+
