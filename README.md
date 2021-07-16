@@ -2,7 +2,7 @@
 ### Note this project is under development, and will undergo a massive number of breaking changes 
 ###TODO
 
-- implement glob.glob
+- better naming
 - export to csv
 - better handling of not existing files 
 # Description
