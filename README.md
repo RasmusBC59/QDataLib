@@ -12,12 +12,12 @@ QDataLib is a library of wrappers around some of the most useful ”data”-func
 # Installation
 To install QDataLib from source do the following:
 ```bash
-$ git clone https://github.com/RasmusBC59/QDataLib.git
+$ git clone https://github.com/qdev-dk/QDataLib.git
 $ cd QDataLib
 $ pip install .
 ```
 # Usage
- see [here](https://rasmusbc59.github.io/QDataLib/)
+ see [here](https://qdev-dk.github.io/QDataLib/)
 ## Running the tests
 
 If you have gotten 'qdatalib' from source, you may run the tests locally.
