@@ -1,0 +1,16 @@
+Changelog for qdatalib 0.1.0
+================================
+
+The July 2021 release of qdatalib.
+
+
+Breaking Changes:
+_________________
+
+There are no breaking changes in this release of pulsequantum
+
+
+New:
+____
+- First release of qdatalib
+
