@@ -2,8 +2,9 @@
 qdatalib
 *****************************************************************
 
-Library for Quantum Data
-
+QDataLib is a library of wrappers around some of the most useful ”data”-functions in QCoDeS. 
+The Idea of QDataLib is to keep track of your data files using a MongoDB database, 
+and ease the export to other file formats than SQLite.
 
 Documentation
 -------------
@@ -11,8 +12,8 @@ Documentation
 .. toctree::
    :maxdepth: 2
 
-   api/index
    example_notebooks/index
+   api/index
 
 
 Indices and tables
