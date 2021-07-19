@@ -14,6 +14,7 @@ Documentation
 
    example_notebooks/index
    api/index
+   changes/index
 
 
 Indices and tables
